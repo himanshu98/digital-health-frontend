@@ -68,3 +68,11 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+### Gitbuhub best practices
+
+- Always take pull from main branch
+- Create branch with branchname_team_no
+- Raise a PR to master branch and Pr description should have user story link and add atleast two reviewers
+- Give meaningful commit message.
+- Once the PR is approved by atleast two reviewer we can merge it to master branch
