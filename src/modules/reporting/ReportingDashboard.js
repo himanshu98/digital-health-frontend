@@ -6,7 +6,6 @@ import CaseManagersPerformance from './CaseManagersPerformance/CaseManagersPerfo
 import ServiceProvider from './ServiceProvider/ServiceProvider';
 import Demographics from './Demographics/Demographics';
 import CommunityEvents from './CommunityEvents/CommunityEvents';
-import './ReportingDashboard.css';
 
 const ReportingDashboard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
