@@ -1,9 +1,9 @@
 import React from 'react'
 
-const reporting = () => {
+const ReportingDashboard = () => {
   return (
-    <div>reporting</div>
+    <div>ReportingDashboard</div>
   )
 }
 
-export default reporting
+export default ReportingDashboard
