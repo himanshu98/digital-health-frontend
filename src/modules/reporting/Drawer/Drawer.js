@@ -3,13 +3,15 @@ import { Drawer } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import "./Drawer.css";
 
-const Sidebar = () => {
+const Sidebar = ({onDrawerClose, onDrawerOpen}) => {
   const [open, setOpen] = useState(false);
   const showDrawer = () => {
     setOpen(true);
+    onDrawerOpen(); 
   };
   const onClose = () => {
     setOpen(false);
+    onDrawerClose();
   };
   return (
     <>
@@ -33,6 +35,9 @@ const Sidebar = () => {
           </li>
           <li>
             <a href="/reporting/performance">Case Manager Performance Report</a>
+          </li>
+          <li>
+            <a href="/reporting/communityevents">Community Events</a>
           </li>
         </ul>
       </Drawer>

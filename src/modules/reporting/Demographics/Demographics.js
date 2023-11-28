@@ -9,7 +9,6 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { Colors } from "chart.js";
-// import { Row, Col } from "antd";
 import "./Demographics.css";
 
 ChartJS.register(

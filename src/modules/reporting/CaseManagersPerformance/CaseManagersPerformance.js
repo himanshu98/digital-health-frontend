@@ -171,7 +171,7 @@ const CaseManagersPerformance = () => {
           </Col>
         </Row>
         <Row>
-          <Table columns={columns} dataSource={data} tableLayout="fixed" />
+          <Table columns={columns} dataSource={filteredData} tableLayout="fixed" />
         </Row>
       </div>
     </>

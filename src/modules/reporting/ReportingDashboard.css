@@ -1,0 +1,11 @@
+/* ReportingDashboard.css */
+
+.main-content {
+    margin-left: 0;
+    transition: margin-left 0.3s;
+  }
+  
+  .main-content.shifted {
+    margin-left: 378px;
+  }
+  

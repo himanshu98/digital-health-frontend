@@ -174,7 +174,7 @@ const ServiceProvider = () => {
           </Col>
         </Row>
         <Row>
-          <Table columns={columns} dataSource={data} size="large" />
+          <Table columns={columns} dataSource={filteredData} size="large" />
         </Row>
       </div>
     </>
