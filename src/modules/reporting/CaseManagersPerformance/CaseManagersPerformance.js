@@ -129,7 +129,7 @@ const CaseManagersPerformance = () => {
   return (
     <>
       <div className="patient">
-        <h1 className="heading">Case Manager Performance</h1>
+        <h1 className="heading">Case Manager Utilization</h1>
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           <Col>
             <h3 className="sub-heading">Filters</h3>
