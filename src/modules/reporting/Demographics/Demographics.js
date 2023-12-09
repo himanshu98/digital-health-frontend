@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -6,10 +7,21 @@ import {
   Title,
   Tooltip,
   Legend,
+  PieController,
+  DoughnutController,
+  ArcElement,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Bar, Pie, Doughnut, Line } from "react-chartjs-2";
 import { Colors } from "chart.js";
-import { DatePicker, Space as AntSpace, Button } from "antd";
+import {
+  DatePicker,
+  Space as AntSpace,
+  Button,
+  Row,
+  Col,
+  Typography,
+  Select,
+} from "antd";
 import "./Demographics.css";
 
 // register chart.js
@@ -20,11 +32,18 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Colors
+  Colors,
+  PieController,
+  DoughnutController,
+  ArcElement,
 );
 
 // Declare datepicker
 const { RangePicker } = DatePicker;
+
+const { Title: AntTitle } = Typography;
+
+const { Option } = Select;
 
 const Demographics = () => {
   // common patient data static
@@ -34,7 +53,7 @@ const Demographics = () => {
       first_name: "Kaye",
       last_name: "Durham",
       hasDisability: true,
-      sex: 'Male',
+      sex: "Male",
       age: 58,
       city: "Aurora",
       state: "Florida",
@@ -49,7 +68,7 @@ const Demographics = () => {
       first_name: "Clayton",
       last_name: "Grant",
       hasDisability: false,
-      sex: 'Male',
+      sex: "Male",
       age: 52,
       city: "Wichita",
       state: "Indiana",
@@ -64,7 +83,7 @@ const Demographics = () => {
       first_name: "Shea",
       last_name: "Maddox",
       hasDisability: false,
-      sex: 'Female',
+      sex: "Female",
       age: 46,
       city: "Frankfort",
       state: "Illinois",
@@ -79,7 +98,7 @@ const Demographics = () => {
       first_name: "Hedley",
       last_name: "Hoover",
       hasDisability: true,
-      sex: 'Male',
+      sex: "Male",
       age: 83,
       city: "Wilmington",
       state: "Texas",
@@ -94,7 +113,7 @@ const Demographics = () => {
       first_name: "Emma",
       last_name: "Stephenson",
       hasDisability: true,
-      sex: 'Male',
+      sex: "Male",
       age: 51,
       city: "Stamford",
       state: "Montana",
@@ -109,7 +128,7 @@ const Demographics = () => {
       first_name: "Hector",
       last_name: "Sandoval",
       hasDisability: true,
-      sex: 'Male',
+      sex: "Male",
       age: 93,
       city: "Hattiesburg",
       state: "Florida",
@@ -124,7 +143,7 @@ const Demographics = () => {
       first_name: "Eric",
       last_name: "Bowen",
       hasDisability: true,
-      sex: 'Male',
+      sex: "Male",
       age: 78,
       city: "Bellevue",
       state: "Colorado",
@@ -139,7 +158,7 @@ const Demographics = () => {
       first_name: "Anastasia",
       last_name: "Gibbs",
       hasDisability: false,
-      sex: 'Female',
+      sex: "Female",
       age: 75,
       city: "Cincinnati",
       state: "Ohio",
@@ -154,7 +173,7 @@ const Demographics = () => {
       first_name: "Arsenio",
       last_name: "Francis",
       hasDisability: false,
-      sex: 'Male',
+      sex: "Male",
       age: 62,
       city: "Chandler",
       state: "Pennsylvania",
@@ -169,7 +188,7 @@ const Demographics = () => {
       first_name: "Libby",
       last_name: "Mcpherson",
       hasDisability: true,
-      sex: 'Female',
+      sex: "Female",
       age: 82,
       city: "Omaha",
       state: "Louisiana",
@@ -193,10 +212,6 @@ const Demographics = () => {
     plugins: {
       legend: {
         display: true,
-      },
-      colors: {
-        enabled: true,
-        forceOverride: true,
       },
       datalabels: {
         display: true,
@@ -228,7 +243,6 @@ const Demographics = () => {
     countByDisability[hasDisability ? "Yes" : "No"]++;
   });
 
-
   // Race chart
   const raceLabels = Object.keys(countByRace);
   const patientCounts = raceLabels.map((race) => countByRace[race]);
@@ -239,7 +253,38 @@ const Demographics = () => {
         label: "Number of Patients",
         data: [],
         borderWidth: 1,
-        backgroundColor: [],
+        backgroundColor: [
+          "rgba(255,99,132,0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(255, 206, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
+        ],
+        borderColor: [
+          "rgba(255,99,132,1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
+        ],
+        hoverBackgroundColor: [
+          "rgba(255,99,132,0.4)",
+          "rgba(54, 162, 235, 0.4)",
+          "rgba(255, 206, 86, 0.4)",
+          "rgba(75, 192, 192, 0.4)",
+          "rgba(153, 102, 255, 0.4)",
+          "rgba(255, 159, 64, 0.4)",
+        ],
+        hoverBorderColor: [
+          "rgba(255,99,132,1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
+        ],
       },
     ],
   };
@@ -254,6 +299,10 @@ const Demographics = () => {
         label: "Patients by Age",
         data: [],
         borderWidth: 1,
+        backgroundColor: "rgba(153, 255, 153, 0.4)",
+        borderColor: "rgba(153, 255, 153, 1)",
+        hoverBackgroundColor: "rgba(153, 255, 153, 0.6)",
+        hoverBorderColor: "rgba(153, 255, 153, 1)",
       },
     ],
   };
@@ -291,6 +340,22 @@ const Demographics = () => {
         label: "Patients by Sex",
         data: Object.values(countBySex),
         borderWidth: 1,
+        backgroundColor: [
+          "rgba(204, 153, 255, 0.4)",
+          "rgba(255, 153, 204, 0.4)",
+        ],
+        borderColor: [
+          "rgba(204, 153, 255, 1)",
+          "rgba(255, 153, 204, 1)",
+        ],
+        hoverBackgroundColor: [
+          "rgba(204, 153, 255, 0.6)",
+          "rgba(255, 153, 204, 0.6)",
+        ],
+        hoverBorderColor: [
+          "rgba(204, 153, 255, 1)",
+          "rgba(255, 153, 204, 1)",
+        ],
       },
     ],
   };
@@ -304,35 +369,114 @@ const Demographics = () => {
         label: "Patients by Disability",
         data: Object.values(countByDisability),
         borderWidth: 1,
+        backgroundColor: "rgba(153, 204, 255, 0.2)",
+        borderColor: "rgba(153, 204, 255, 1)",
+        hoverBackgroundColor: "rgba(153, 204, 255, 0.4)",
+        hoverBorderColor: "rgba(153, 204, 255, 1)",
       },
     ],
   };
 
+  // dynamic charts
+
+  const [chartType, setChartType] = useState("bar");
+  const getChartData = () => {
+    switch (chartType) {
+      case "bar":
+        return raceData;
+      case "pie":
+        return {
+          labels: raceData.labels,
+          datasets: [{ data: raceData.datasets[0].data }],
+        };
+      case "doughnut":
+        return {
+          labels: raceData.labels,
+          datasets: [{ data: raceData.datasets[0].data }],
+        };
+      default:
+        return {};
+    }
+  };
+  const chartTypes = ["bar", "pie", "doughnut"];
+
+  const handleChartTypeChange = (value) => {
+    setChartType(value);
+  };
+
+
+  const selectedChartData = getChartData();
+
+  const renderChart = () => {
+    switch (chartType) {
+      case "bar":
+        return <Bar data={raceData} options={options} />;
+      case "pie":
+        return <Pie data={raceData} options={options} />;
+      case "doughnut":
+        return <Doughnut data={raceData} options={options} />;
+      default:
+        return null;
+    }
+  };
+
+
+
   return (
     <>
-      <div className="chart-container">
-        <div className="datepicker-container">
-          <AntSpace direction="vertical" size={12}>
-            <RangePicker />
-          </AntSpace>
-          <Button>Filter</Button>
-        </div>
-        <div className="chart-row">
-          <div className="chart">
-            <h4># of Patients by Race</h4>
-            <Bar data={raceData} options={options} />
+      <div className="patient" style={{ padding: "20px" }}>
+        <Row>
+          <Col span={24}>
+            <AntTitle level={2} style={{ marginLeft: "100px" }}>
+              Patient Demographics
+            </AntTitle>
+          </Col>
+        </Row>
+        <div className="chart-container">
+          <div className="datepicker-container">
+            <AntSpace direction="vertical" size={12}>
+              <RangePicker />
+            </AntSpace>
+            <Button>Filter</Button>
           </div>
-          <div className="chart">
-            <h4>Patients by Age band</h4>
-            <Bar data={ageBandBarData} options={options} />
-          </div>
-          <div className="chart">
-            <h4>Patients by Sex</h4>
-            <Bar data={sexBarData} options={options} />
-          </div>
-          <div className="chart">
-            <h4>Patients by Disability</h4>
-            <Bar data={disabilityBarData} options={options} />
+          <div className="chart-row">
+            {/* <div className="chart">
+              <h4># of Patients by Race</h4>
+              <Bar data={raceData} options={options} />
+            </div> */}
+            <div className="chart">
+              <h4>
+                Patients by{" "}
+                {chartType === "line"
+                  ? "Age"
+                  : chartType.charAt(0).toUpperCase() + chartType.slice(1)}
+              </h4>
+              <Select
+                defaultValue={chartType}
+                style={{ width: 120 }}
+                onChange={handleChartTypeChange}
+              >
+                {chartTypes.map((type) => (
+                  <Option key={type} value={type}>
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </Option>
+                ))}
+              </Select>
+              {renderChart()}
+            </div>
+            <div className="chart">
+              <h4>Patients by Age band</h4>
+              <Bar data={ageBandBarData} options={options} />
+            </div>
+            <div className="chart">
+              <h4>Patients by Sex</h4>
+              <Bar data={sexBarData} options={options} />
+            </div>
+            <div className="chart">
+              <h4>Patients by Disability</h4>
+              <Bar data={disabilityBarData} options={options} />
+              {/* <Pie data={disabilityBarData} options={options} /> */}
+            </div>
           </div>
         </div>
       </div>

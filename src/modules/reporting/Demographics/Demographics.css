@@ -1,4 +1,8 @@
-.heading {
+.patient {
+  padding: 20px;
+}
+
+.ant-typography h2 {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
@@ -13,18 +17,18 @@
 .datepicker-container {
   display: flex;
   justify-content: flex-end; /* Align the content to the right */
-  margin-right: 100px; 
+  margin-right: 100px;
   margin-bottom: 20px; /* Add some space at the bottom of the date picker container */
 }
 
 .chart-row {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: space-evenly;
 }
 
 .chart {
-  width: 35%;
+  width: 40%;
   max-width: 100%;
   box-sizing: border-box;
   margin: 10px;

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Form, Input, InputNumber, Popconfirm, Table, Typography, Space, Button } from 'antd';
+import { Form, Input, InputNumber, Popconfirm, Table, Typography, Space, Button, Row, Col } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import CommunityEventsDetails from './CommunityEventsDetails';
 import AddCommunityEvent from './AddCommunityEvent';
 import "./CommunityEvents.css"
 
+const { Title } = Typography;
 const originData = [];
 for (let i = 0; i < 100; i++) {
   originData.push({
@@ -192,7 +193,12 @@ const CommunityEvents = () => {
   }
   return (
     <>
-      <h1 className="heading">Community Events</h1>
+    <div className="patient" style={{ padding: '20px' }}>
+      <Row>
+        <Col span={24}>
+          <Title level={2}>Community Events</Title>
+        </Col>
+      </Row>
       <Button
         type="primary"
         icon={<PlusOutlined />}
@@ -218,6 +224,7 @@ const CommunityEvents = () => {
           }}
         />
       </Form>
+      </div>
     </>
   );
 };

@@ -1,10 +1,11 @@
-import { Table, Input, Select, Row, Col, Button, Space } from "antd";
+import { Table, Input, Select, Row, Col, Button, Space, Typography } from "antd";
 import React, { useState } from "react";
 import ServiceProviderDetails from "./ServiceProviderDetails";
 
 import "./ServiceProvider.css";
 
 const { Option } = Select;
+const { Title } = Typography;
 
 const ServiceProvider = () => {
   // Open drawer on click of name
@@ -160,8 +161,12 @@ const ServiceProvider = () => {
   };
   return (
     <>
-      <div className="patient">
-        <h1 className="heading">Service Provider Reports</h1>
+      <div className="patient" style={{ padding: '20px' }}>
+      <Row>
+        <Col span={24}>
+          <Title level={2}>Service Provider Reports</Title>
+        </Col>
+      </Row>
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           <Col>
             <h3 className="sub-heading">Filters</h3>
