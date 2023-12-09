@@ -6,6 +6,7 @@ import CaseManagersPerformance from './CaseManagersPerformance/CaseManagersPerfo
 import ServiceProvider from './ServiceProvider/ServiceProvider';
 import Demographics from './Demographics/Demographics';
 import CommunityEvents from './CommunityEvents/CommunityEvents';
+import CaseManagerUtilization from './CaseManagerUtilization/CaseManagerUtilization';
 
 const ReportingDashboard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -30,6 +31,7 @@ const ReportingDashboard = () => {
       <div style={mainContentStyle}>
         <Switch>
           <Route path="/reporting/patient" component={Patient} />
+          <Route path="/reporting/utilization" component={CaseManagerUtilization} />
           <Route path="/reporting/performance" component={CaseManagersPerformance} />
           <Route path="/reporting/serviceprovider" component={ServiceProvider} />
           <Route path="/reporting/demographics" component={Demographics} />

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Form, Input, InputNumber, Popconfirm, Table, Typography, Space, Button } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import CommunityEventsDetails from './CommunityEventsDetails';
+import AddCommunityEvent from './AddCommunityEvent';
 import "./CommunityEvents.css"
 
 const originData = [];
@@ -86,7 +87,7 @@ const CommunityEvents = () => {
       console.log('Validate Failed:', errInfo);
     }
   };
-  // Open drawer on click of name
+  // Open drawer on click of Event Name
   const [openedDrawerKey, setOpenedDrawerKey] = useState(null);
   const openDrawer = (key) => {
     setOpenedDrawerKey(key);
@@ -180,9 +181,15 @@ const CommunityEvents = () => {
   const deleteRecord = () => {
     console.log("delete");
   }
-  const handleAddEvent = () => {
-    console.log('Add Event clicked');
+
+  // Add event Drawer
+  const [open, setOpen] = useState(false);
+  const showDrawer = () => {
+    setOpen(true);
   };
+  const setCloseDrawer = () => {
+    setOpen(false);
+  }
   return (
     <>
       <h1 className="heading">Community Events</h1>
@@ -190,10 +197,11 @@ const CommunityEvents = () => {
         type="primary"
         icon={<PlusOutlined />}
         className="addButton"
-        onClick={handleAddEvent}
+        onClick={showDrawer}
       >
         Add Event
       </Button>
+      <AddCommunityEvent addEvent={open} setVisibility={setCloseDrawer}/>
       <Form form={form} component={false}>
         <Table
           components={{
