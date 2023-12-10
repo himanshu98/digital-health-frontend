@@ -1,181 +1,92 @@
-import { Table, Input, Select, Row, Col, Button, Space } from "antd";
-import { useState } from "react";
+import React, { useState } from 'react';
+import { Row, Col, Typography, Select, Button } from 'antd';
+import { Bar } from 'react-chartjs-2';
 
-import "./CaseManagersPerformance.css";
-
+const { Title } = Typography;
 const { Option } = Select;
-const columns = [
-  {
-    title: "Case Manager First Name",
-    dataIndex: "case_manager_first_name",
-    key: "case_manager_first_name",
-  },
-  {
-    title: "Case Manager Last Name",
-    dataIndex: "case_manager_last_name",
-    key: "case_manager_last_name",
-  },
-  {
-    title: "Patient Name",
-    dataIndex: "patient_name",
-    key: "patient_name",
-  },
-  {
-    title: "Service",
-    dataIndex: "service",
-    key: "service",
-  },
-  {
-    title: "Service Duration",
-    dataIndex: "service_duration",
-    key: "service_duration",
-  },
-  {
-    title: "Service Start Date",
-    dataIndex: "service_start_date",
-    key: "service_start_date",
-  },
-  {
-    title: "Service End Date",
-    dataIndex: "service_end_date",
-    key: "service_end_date",
-  },
-];
 
-const data = [
-  {
-    case_manager_first_name: "Mike",
-    case_manager_last_name: "Ross",
-    patient_name: "Anthony Stark",
-    service: "Meal Planning and Preparation",
-    service_duration: "7 months",
-    service_start_date: "3/1/23 10:00",
-    service_end_date: "Present",
-  },
-  {
-    case_manager_first_name: "Steve",
-    case_manager_last_name: "Rodgers",
-    patient_name: "Transportation",
-    service: "2 years",
-    service_duration: "7/10/20 19:07",
-    service_start_date: "7/12/22 7:07",
-    service_end_date: "",
-  },
-  {
-    case_manager_first_name: "Jessica",
-    case_manager_last_name: "Pearson",
-    patient_name: "Natasha",
-    service: "Shopper",
-    service_duration: "5 years",
-    service_start_date: "8/10/14 19:07",
-    service_end_date: "7/12/19 7:07",
-  },
-  {
-    case_manager_first_name: "Robert",
-    case_manager_last_name: "Zane",
-    patient_name: "Bruce Banner",
-    service: "Companionship",
-    service_duration: "4 months",
-    service_start_date: "6/15/23 12:23",
-    service_end_date: "Present",
-  },
-  {
-    case_manager_first_name: "Louis",
-    case_manager_last_name: "Litt",
-    patient_name: "Clint Barton",
-    service: "Legal Counsel",
-    service_duration: "5 days",
-    service_start_date: "10/14/23 13:46",
-    service_end_date: "Present",
-  },
-  {
-    case_manager_first_name: "Donna",
-    case_manager_last_name: "Paulson",
-    patient_name: "Kate Bishop",
-    service: "Meal Planning and Preparation",
-    service_duration: "3 months",
-    service_start_date: "7/13/23 14:05",
-    service_end_date: "Present",
-  },
-];
+const CaseManagerPerformance = () => {
+  const chartData1 = {
+    labels: ['Category 1', 'Category 2', 'Category 3', 'Category 4', 'Category 5'],
+    datasets: [
+      {
+        label: 'Performance 1',
+        backgroundColor: 'rgba(75,192,192,0.2)',
+        borderColor: 'rgba(75,192,192,1)',
+        borderWidth: 1,
+        hoverBackgroundColor: 'rgba(75,192,192,0.4)',
+        hoverBorderColor: 'rgba(75,192,192,1)',
+        data: [65, 59, 80, 81, 56],
+      },
+    ],
+  };
 
-const CaseManagersPerformance = () => {
-  const [filteredData, setFilteredData] = useState(data);
-  const [nameFilter, setNameFilter] = useState("");
-  const [phoneFilter, setPhoneFilter] = useState("");
-  const [genderFilter, setGenderFilter] = useState("null");
+  const chartData2 = {
+    labels: ['Category A', 'Category B', 'Category C', 'Category D', 'Category E'],
+    datasets: [
+      {
+        label: 'Performance 2',
+        backgroundColor: 'rgba(255,99,132,0.2)',
+        borderColor: 'rgba(255,99,132,1)',
+        borderWidth: 1,
+        hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+        hoverBorderColor: 'rgba(255,99,132,1)',
+        data: [45, 72, 68, 34, 80],
+      },
+    ],
+  };
+
+  const [selectedCaseManager, setSelectedCaseManager] = useState('');
+
+  const handleCaseManagerChange = (value) => {
+    setSelectedCaseManager(value);
+  };
 
   const handleSearch = () => {
-    const filteredResults = data.filter((item) => {
-      const nameMatch = item.name
-        .toLowerCase()
-        .includes(nameFilter.toLowerCase());
-      const phoneMatch = item.contact.includes(phoneFilter);
-      const genderMatch =
-        genderFilter === "null" || item.gender === genderFilter;
-
-      return nameMatch && phoneMatch && genderMatch;
-    });
-
-    setFilteredData(filteredResults);
+    console.log(`Searching for ${selectedCaseManager}`);
   };
 
-  const clearFilters = () => {
-    setNameFilter("");
-    setPhoneFilter("");
-    setGenderFilter("null");
-    setFilteredData(data);
+  const handleReset = () => {
+    setSelectedCaseManager('');
   };
+
   return (
-    <>
-      <div className="patient">
-        <h1 className="heading">Case Manager Performance</h1>
-        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-          <Col>
-            <h3 className="sub-heading">Filters</h3>
-          </Col>
-          <Col>
-            <Input
-              placeholder="Search by name"
-              value={nameFilter}
-              onChange={(e) => setNameFilter(e.target.value)}
-            />
-          </Col>
-          <Col>
-            <Input
-              placeholder="Search by Phone #"
-              value={phoneFilter}
-              onChange={(e) => setPhoneFilter(e.target.value)}
-            />
-          </Col>
-          <Col>
-            <Select
-              defaultValue="Gender"
-              value={genderFilter}
-              onChange={(value) => setGenderFilter(value)}
-            >
-              <Option value="null" disabled>
-                Gender
-              </Option>
-              <Option value="male">Male</Option>
-              <Option value="female">Female</Option>
-            </Select>
-          </Col>
-          <Col>
-            <Space wrap>
-              <Button type="primary" onClick={handleSearch}>
-                Search
-              </Button>
-              <Button onClick={clearFilters}>Clear</Button>
-            </Space>
-          </Col>
-        </Row>
-        <Row>
-          <Table columns={columns} dataSource={filteredData} tableLayout="fixed" />
-        </Row>
-      </div>
-    </>
+    <div style={{ padding: '20px' }}>
+      <Row>
+        <Col span={24}>
+          <Title level={2}>Case Manager Performance</Title>
+        </Col>
+      </Row>
+      <Row gutter={16} style={{ marginBottom: '20px' }}>
+        <Col span={8}>
+          <Select
+            placeholder="Select Case Manager"
+            style={{ width: '100%' }}
+            onChange={handleCaseManagerChange}
+            value={selectedCaseManager}
+          >
+            <Option value="CaseManager1">Case Manager 1</Option>
+            <Option value="CaseManager2">Case Manager 2</Option>
+            <Option value="CaseManager3">Case Manager 3</Option>
+          </Select>
+        </Col>
+        <Col span={8}>
+          <Button type="primary" onClick={handleSearch} style={{ marginRight: '10px' }}>
+            Search
+          </Button>
+          <Button onClick={handleReset}>Reset</Button>
+        </Col>
+      </Row>
+      <Row gutter={16}>
+        <Col span={12}>
+          <Bar data={chartData1} />
+        </Col>
+        <Col span={12}>
+          <Bar data={chartData2} />
+        </Col>
+      </Row>
+    </div>
   );
 };
 
-export default CaseManagersPerformance;
+export default CaseManagerPerformance;
