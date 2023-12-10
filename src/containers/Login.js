@@ -1,11 +1,14 @@
 // Login.js
 import React from 'react';
 import { Form, Input, Button, Checkbox } from 'antd';
+import { useHistory } from 'react-router-dom';
 
 const Login = () => {
+  const history = useHistory();
   const onFinish = (values) => {
     console.log('Received values:', values);
     // Add authentication logic here
+    history.push('/careManagement');
   };
 
   return (
