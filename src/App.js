@@ -4,6 +4,7 @@ import HomePage from "../src/containers/HomePage";
 import CareManagementDashboard from "./modules/careManagement/CareManagementDashboard";
 import ReportingDashboard from "./modules/reporting/ReportingDashboard";
 import { ConfigProvider, theme } from "antd";
+import CaseManagerSelectionPage from "./modules/careManagement/CaseManagerSelectionPage";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <div className="App">
         <Router>
           <Switch>
+          <Route path="/casemanager" component={CaseManagerSelectionPage} />
             <Route
               exact
               path="/careManagement"
