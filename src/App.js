@@ -8,28 +8,7 @@ import { ConfigProvider, theme } from "antd";
 function App() {
   return (
     <ConfigProvider
-      theme={{
-        components: {
-          Button: {
-            colorPrimary: '#1890ff',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '8px',
-            hoverColor: '#40a9ff',
-          },
-          Input: {
-            colorPrimary: '#52c41a',
-            borderColor: '#1890ff',
-            borderRadius: '8px',
-            placeholderColor: '#8c8c8c',
-            backgroundColor: '#001529',
-          },
-          Checkbox: {
-            colorPrimary: '#faad14',
-            checkedColor: '#faad14',
-          },
-        },
-                        
+      theme={{       
         algorithm: [theme.compactAlgorithm],
       }}
     >

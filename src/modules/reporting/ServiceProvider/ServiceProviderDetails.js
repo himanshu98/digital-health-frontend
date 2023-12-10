@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Drawer } from 'antd';
-import { Tabs } from 'antd';
+import { Tabs, Table } from 'antd';
+import moment from 'moment';
 
 const ServiceProviderDetails = ({setShowDetails, record}) => {
   // Drawer
@@ -19,11 +20,6 @@ const ServiceProviderDetails = ({setShowDetails, record}) => {
   const items = [
     {
       key: '1',
-      label: 'Reviews',
-      children: <ReviewsTabContent record={record}/>
-    },
-    {
-      key: '2',
       label: 'History',
       children: <HistoryTabContent record={record}/>
     }
@@ -39,30 +35,50 @@ const ServiceProviderDetails = ({setShowDetails, record}) => {
         closable={false}
       >
         <Tabs defaultActiveKey="1" items={items}/>
-        {/* <p>{record.service_provider_name}</p> */}
       </Drawer>
     </>
   );
 };
 
-const ReviewsTabContent = ({record}) => {
-  // Content for Reviews Tab
-  return (
-    <div>
-      <h2>Reviews Tab Content</h2>
-      {record?.service_provider_name}
-    </div>
-  );
-};
-
 const HistoryTabContent = ({record}) => {
+  const columns = [
+    {
+      title: 'Start Time',
+      dataIndex: 'startTime',
+      key: 'startTime',
+      render: (startTime) => moment(startTime).format('YYYY-MM-DD HH:mm:ss')
+    },
+    {
+      title: 'End Time',
+      dataIndex: 'endTime',
+      key: 'endTime',
+      render: (startTime) => moment(startTime).format('YYYY-MM-DD HH:mm:ss')
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+    },
+    {
+      title: 'Remarks',
+      dataIndex: 'remarks',
+      key: 'remarks',
+    },
+  ];
+
+  const data = record.recentVisits.map((visit, index) => ({
+    ...visit,
+    index: index + 1,
+  }));
+
   // Content for History Tab
   return (
-    <div>
-      
-      <h2>History Tab Content</h2>
-      {record?.service_provider_name}
-    </div>
+    <Table
+      columns={columns}
+      dataSource={data}
+      size="small"
+      pagination={false}
+    />
   );
 };
 
