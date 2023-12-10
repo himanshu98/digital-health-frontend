@@ -1,9 +1,11 @@
-import { Table, Input, Select, Row, Col, Button, Space } from "antd";
+import { Table, Input, Select, Row, Col, Button, Space, Typography} from "antd";
 import { useState } from "react";
 
 import "./Patient.css";
 
 const { Option } = Select;
+const { Title } = Typography;
+
 const columns = [
   {
     title: "Name",
@@ -250,8 +252,12 @@ const Patient = () => {
   };
   return (
     <>
-      <div className="patient">
-        <h1 className="heading">Patient Disability Report</h1>
+      <div className="patient" style={{ padding: '20px' }}>
+      <Row>
+        <Col span={24}>
+          <Title level={2}>Patient Disability Report</Title>
+        </Col>
+      </Row>
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           <Col>
             <h3 className="sub-heading">Filters</h3>

@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Form, Input, InputNumber, Popconfirm, Table, Typography, Space, Button } from 'antd';
+import { Form, Input, InputNumber, Popconfirm, Table, Typography, Space, Button, Row, Col } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import CommunityEventsDetails from './CommunityEventsDetails';
+import AddCommunityEvent from './AddCommunityEvent';
 import "./CommunityEvents.css"
 
+const { Title } = Typography;
 const originData = [];
 for (let i = 0; i < 100; i++) {
   originData.push({
@@ -85,12 +88,35 @@ const CommunityEvents = () => {
       console.log('Validate Failed:', errInfo);
     }
   };
+  // Open drawer on click of Event Name
+  const [openedDrawerKey, setOpenedDrawerKey] = useState(null);
+  const openDrawer = (key) => {
+    setOpenedDrawerKey(key);
+  };
+  const closeDrawer = () => {
+    setOpenedDrawerKey(null);
+  };
   const columns = [
     {
       title: 'name',
       dataIndex: 'name',
       width: '25%',
       editable: true,
+      render: (_, record) => {
+        return (
+          <>
+            <Button type="link" onClick={() => openDrawer(record.key)}>
+              {record.name}
+            </Button>
+            {openedDrawerKey === record.key && (
+              <CommunityEventsDetails
+                setShowDetails={closeDrawer}
+                record={record}
+              />
+            )}
+          </>
+        )
+      }
     },
     {
       title: 'age',
@@ -105,38 +131,38 @@ const CommunityEvents = () => {
       editable: true,
     },
     {
-        title: 'operation',
-        dataIndex: 'operation',
-        render: (_, record) => {
-          const editable = isEditing(record);
-          return editable ? (
-            <Space>
-              <Typography.Link
-                onClick={() => save(record.key)}
-                style={{ marginRight: 8 }}
-              >
-                Save
-              </Typography.Link>
-              <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                <a>Cancel</a>
-              </Popconfirm>
-            </Space>
-          ) : (
-            <Space>
-              <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                Edit
-              </Typography.Link>
-              <Popconfirm
-                title="Sure to delete?"
-                onConfirm={() => deleteRecord(record.key)} // Call your delete method here
-              >
-                <Button icon={<DeleteOutlined />} type="link" danger />
-              </Popconfirm>
-            </Space>
-          );
-        },
-      }
+      title: 'operation',
+      dataIndex: 'operation',
+      render: (_, record) => {
+        const editable = isEditing(record);
+        return editable ? (
+          <Space>
+            <Typography.Link
+              onClick={() => save(record.key)}
+              style={{ marginRight: 8 }}
+            >
+              Save
+            </Typography.Link>
+            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+              <a>Cancel</a>
+            </Popconfirm>
+          </Space>
+        ) : (
+          <Space>
+            <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+              Edit
+            </Typography.Link>
+            <Popconfirm
+              title="Sure to delete?"
+              onConfirm={() => deleteRecord(record.key)} // Call your delete method here
+            >
+              <Button icon={<DeleteOutlined />} type="link" danger />
+            </Popconfirm>
+          </Space>
+        );
+      },
+    }
   ];
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
@@ -156,36 +182,49 @@ const CommunityEvents = () => {
   const deleteRecord = () => {
     console.log("delete");
   }
-  const handleAddEvent = () => {
-    console.log('Add Event clicked');
+
+  // Add event Drawer
+  const [open, setOpen] = useState(false);
+  const showDrawer = () => {
+    setOpen(true);
   };
+  const setCloseDrawer = () => {
+    setOpen(false);
+  }
   return (
     <>
-    <h1 className="heading">Community Events</h1>
-    <Button
+    <div className="patient" style={{ padding: '20px' }}>
+      <Row>
+        <Col span={24}>
+          <Title level={2}>Community Events</Title>
+        </Col>
+      </Row>
+      <Button
         type="primary"
         icon={<PlusOutlined />}
         className="addButton"
-        onClick={handleAddEvent}
+        onClick={showDrawer}
       >
         Add Event
       </Button>
-    <Form form={form} component={false}>
-      <Table
-        components={{
-          body: {
-            cell: EditableCell,
-          },
-        }}
-        bordered
-        dataSource={data}
-        columns={mergedColumns}
-        rowClassName="editable-row"
-        pagination={{
-          onChange: cancel,
-        }}
-      />
-    </Form>
+      <AddCommunityEvent addEvent={open} setVisibility={setCloseDrawer}/>
+      <Form form={form} component={false}>
+        <Table
+          components={{
+            body: {
+              cell: EditableCell,
+            },
+          }}
+          bordered
+          dataSource={data}
+          columns={mergedColumns}
+          rowClassName="editable-row"
+          pagination={{
+            onChange: cancel,
+          }}
+        />
+      </Form>
+      </div>
     </>
   );
 };
