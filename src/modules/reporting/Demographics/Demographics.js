@@ -11,7 +11,7 @@ import {
   DoughnutController,
   ArcElement,
 } from "chart.js";
-import { Bar, Pie, Doughnut, Line } from "react-chartjs-2";
+import { Bar, Pie, Doughnut } from "react-chartjs-2";
 import { Colors } from "chart.js";
 import {
   DatePicker,
@@ -35,7 +35,7 @@ ChartJS.register(
   Colors,
   PieController,
   DoughnutController,
-  ArcElement,
+  ArcElement
 );
 
 // Declare datepicker
@@ -199,7 +199,18 @@ const Demographics = () => {
       services_used: "Exercise and Fitness Training",
     },
   ];
-
+  const pastelColors = [
+    "#FFD3B6", // Apricot
+    "#B8EACC", // Celadon Green
+    "#C0D6DB", // Baby Blue
+    "#FFD9AB", // Light Coral
+    "#FFC1C6", // Pink Lace
+    "#C2E9E0", // Mint Ice
+    "#FFC6BE", // Salmon Pink
+    "#FFD8C9", // Peach Cream
+    "#FFE4C7", // Light Apricot
+    "#DAC8E3", // Lilac
+  ];
   // chart options
   const options = {
     indexAxis: "y",
@@ -223,6 +234,7 @@ const Demographics = () => {
       },
     },
   };
+
   // Count data for charts
   const countByRace = {};
   const countBySex = { Male: 0, Female: 0 };
@@ -253,38 +265,14 @@ const Demographics = () => {
         label: "Number of Patients",
         data: [],
         borderWidth: 1,
-        backgroundColor: [
-          "rgba(255,99,132,0.2)",
-          "rgba(54, 162, 235, 0.2)",
-          "rgba(255, 206, 86, 0.2)",
-          "rgba(75, 192, 192, 0.2)",
-          "rgba(153, 102, 255, 0.2)",
-          "rgba(255, 159, 64, 0.2)",
-        ],
-        borderColor: [
-          "rgba(255,99,132,1)",
-          "rgba(54, 162, 235, 1)",
-          "rgba(255, 206, 86, 1)",
-          "rgba(75, 192, 192, 1)",
-          "rgba(153, 102, 255, 1)",
-          "rgba(255, 159, 64, 1)",
-        ],
-        hoverBackgroundColor: [
-          "rgba(255,99,132,0.4)",
-          "rgba(54, 162, 235, 0.4)",
-          "rgba(255, 206, 86, 0.4)",
-          "rgba(75, 192, 192, 0.4)",
-          "rgba(153, 102, 255, 0.4)",
-          "rgba(255, 159, 64, 0.4)",
-        ],
-        hoverBorderColor: [
-          "rgba(255,99,132,1)",
-          "rgba(54, 162, 235, 1)",
-          "rgba(255, 206, 86, 1)",
-          "rgba(75, 192, 192, 1)",
-          "rgba(153, 102, 255, 1)",
-          "rgba(255, 159, 64, 1)",
-        ],
+        backgroundColor: pastelColors,
+        borderColor: pastelColors.map((color) => color.replace("0.6", "1")),
+        hoverBackgroundColor: pastelColors.map((color) =>
+          color.replace("0.6", "0.8")
+        ),
+        hoverBorderColor: pastelColors.map((color) =>
+          color.replace("0.6", "1")
+        ),
       },
     ],
   };
@@ -293,19 +281,20 @@ const Demographics = () => {
 
   // Age Chart
   const ageBandBarData = {
-    labels: [],
+    labels: [], // Your labels here
     datasets: [
       {
         label: "Patients by Age",
-        data: [],
+        data: [], // Your data here
         borderWidth: 1,
-        backgroundColor: "rgba(153, 255, 153, 0.4)",
-        borderColor: "rgba(153, 255, 153, 1)",
-        hoverBackgroundColor: "rgba(153, 255, 153, 0.6)",
-        hoverBorderColor: "rgba(153, 255, 153, 1)",
+        backgroundColor: pastelColors,
+        borderColor: pastelColors.map(color => color.replace("0.6", "1")),
+        hoverBackgroundColor: pastelColors.map(color => color.replace("0.6", "0.8")),
+        hoverBorderColor: pastelColors.map(color => color.replace("0.6", "1")),
       },
     ],
   };
+
   const ageBands = {};
   const categorizePatientsByAgeBands = (item) => {
     // Initialize age bands
@@ -340,22 +329,10 @@ const Demographics = () => {
         label: "Patients by Sex",
         data: Object.values(countBySex),
         borderWidth: 1,
-        backgroundColor: [
-          "rgba(204, 153, 255, 0.4)",
-          "rgba(255, 153, 204, 0.4)",
-        ],
-        borderColor: [
-          "rgba(204, 153, 255, 1)",
-          "rgba(255, 153, 204, 1)",
-        ],
-        hoverBackgroundColor: [
-          "rgba(204, 153, 255, 0.6)",
-          "rgba(255, 153, 204, 0.6)",
-        ],
-        hoverBorderColor: [
-          "rgba(204, 153, 255, 1)",
-          "rgba(255, 153, 204, 1)",
-        ],
+        backgroundColor: pastelColors,
+        borderColor: pastelColors.map(color => color.replace("0.6", "1")),
+      hoverBackgroundColor: pastelColors.map(color => color.replace("0.6", "0.8")),
+      hoverBorderColor: pastelColors.map(color => color.replace("0.6", "1")),
       },
     ],
   };
@@ -369,46 +346,40 @@ const Demographics = () => {
         label: "Patients by Disability",
         data: Object.values(countByDisability),
         borderWidth: 1,
-        backgroundColor: "rgba(153, 204, 255, 0.2)",
-        borderColor: "rgba(153, 204, 255, 1)",
-        hoverBackgroundColor: "rgba(153, 204, 255, 0.4)",
-        hoverBorderColor: "rgba(153, 204, 255, 1)",
+        backgroundColor: pastelColors,
+        borderColor: pastelColors.map(color => color.replace("0.6", "1")),
+      hoverBackgroundColor: pastelColors.map(color => color.replace("0.6", "0.8")),
+      hoverBorderColor: pastelColors.map(color => color.replace("0.6", "1")),
       },
     ],
   };
 
   // dynamic charts
-
-  const [chartType, setChartType] = useState("bar");
-  const getChartData = () => {
-    switch (chartType) {
-      case "bar":
-        return raceData;
-      case "pie":
-        return {
-          labels: raceData.labels,
-          datasets: [{ data: raceData.datasets[0].data }],
-        };
-      case "doughnut":
-        return {
-          labels: raceData.labels,
-          datasets: [{ data: raceData.datasets[0].data }],
-        };
-      default:
-        return {};
-    }
-  };
+  const [chartType] = useState("bar");
+  
   const chartTypes = ["bar", "pie", "doughnut"];
 
-  const handleChartTypeChange = (value) => {
-    setChartType(value);
-  };
+  // Race Chart
+  const renderRaceChart = () => (
+    <div className="chart">
+      <h4>Patients by Race</h4>
+      <Select
+        defaultValue={chartType}
+        style={{ width: 120 }}
+        onChange={(value) => setChartTypeRace(value)}
+      >
+        {chartTypes.map((type) => (
+          <Option key={type} value={type}>
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </Option>
+        ))}
+      </Select>
+      {renderRaceChartByType()}
+    </div>
+  );
 
-
-  const selectedChartData = getChartData();
-
-  const renderChart = () => {
-    switch (chartType) {
+  const renderRaceChartByType = () => {
+    switch (chartTypeRace) {
       case "bar":
         return <Bar data={raceData} options={options} />;
       case "pie":
@@ -420,7 +391,110 @@ const Demographics = () => {
     }
   };
 
+  // Age Band Chart
+  const renderAgeBandChart = () => (
+    <div className="chart">
+      <h4>Patients by Age Band</h4>
+      <Select
+        defaultValue={chartType}
+        style={{ width: 120 }}
+        onChange={(value) => setChartTypeAgeBand(value)}
+      >
+        {chartTypes.map((type) => (
+          <Option key={type} value={type}>
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </Option>
+        ))}
+      </Select>
+      {renderAgeBandChartByType()}
+    </div>
+  );
 
+  const renderAgeBandChartByType = () => {
+    switch (chartTypeAgeBand) {
+      case "bar":
+        return <Bar data={ageBandBarData} options={options} />;
+      case "pie":
+        return <Pie data={ageBandBarData} options={options} />;
+      case "doughnut":
+        return <Doughnut data={ageBandBarData} options={options} />;
+      default:
+        return null;
+    }
+  };
+
+  // Sex Chart
+  const renderSexChart = () => (
+    <div className="chart">
+      <h4>Patients by Sex</h4>
+      <Select
+        defaultValue={chartType}
+        style={{ width: 120 }}
+        onChange={(value) => setChartTypeSex(value)}
+      >
+        {chartTypes.map((type) => (
+          <Option key={type} value={type}>
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </Option>
+        ))}
+      </Select>
+      {renderSexChartByType()}
+    </div>
+  );
+
+  const renderSexChartByType = () => {
+    switch (chartTypeSex) {
+      case "bar":
+        return <Bar data={sexBarData} options={options} />;
+      case "pie":
+        return <Pie data={sexBarData} options={options} />;
+      case "doughnut":
+        return <Doughnut data={sexBarData} options={options} />;
+      default:
+        return null;
+    }
+  };
+
+  // Disability Chart
+  const renderDisabilityChart = () => (
+    <div className="chart">
+      <h4>Patients by Disability</h4>
+      <Select
+        defaultValue={chartType}
+        style={{ width: 120 }}
+        onChange={(value) => setChartTypeDisability(value)}
+      >
+        {chartTypes.map((type) => (
+          <Option key={type} value={type}>
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </Option>
+        ))}
+      </Select>
+      {renderDisabilityChartByType()}
+    </div>
+  );
+
+  const renderDisabilityChartByType = () => {
+    switch (chartTypeDisability) {
+      case "bar":
+        return <Bar data={disabilityBarData} options={options} />;
+      case "pie":
+        return <Pie data={disabilityBarData} options={options} />;
+      case "doughnut":
+        return <Doughnut data={disabilityBarData} options={options} />;
+      default:
+        return null;
+    }
+  };
+
+  // const handleChartTypeChange = (value) => {
+  //   setChartType(value);
+  // };
+
+  const [chartTypeRace, setChartTypeRace] = useState("bar");
+  const [chartTypeAgeBand, setChartTypeAgeBand] = useState("bar");
+  const [chartTypeSex, setChartTypeSex] = useState("bar");
+  const [chartTypeDisability, setChartTypeDisability] = useState("bar");
 
   return (
     <>
@@ -440,43 +514,10 @@ const Demographics = () => {
             <Button>Filter</Button>
           </div>
           <div className="chart-row">
-            {/* <div className="chart">
-              <h4># of Patients by Race</h4>
-              <Bar data={raceData} options={options} />
-            </div> */}
-            <div className="chart">
-              <h4>
-                Patients by{" "}
-                {chartType === "line"
-                  ? "Age"
-                  : chartType.charAt(0).toUpperCase() + chartType.slice(1)}
-              </h4>
-              <Select
-                defaultValue={chartType}
-                style={{ width: 120 }}
-                onChange={handleChartTypeChange}
-              >
-                {chartTypes.map((type) => (
-                  <Option key={type} value={type}>
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </Option>
-                ))}
-              </Select>
-              {renderChart()}
-            </div>
-            <div className="chart">
-              <h4>Patients by Age band</h4>
-              <Bar data={ageBandBarData} options={options} />
-            </div>
-            <div className="chart">
-              <h4>Patients by Sex</h4>
-              <Bar data={sexBarData} options={options} />
-            </div>
-            <div className="chart">
-              <h4>Patients by Disability</h4>
-              <Bar data={disabilityBarData} options={options} />
-              {/* <Pie data={disabilityBarData} options={options} /> */}
-            </div>
+            {renderRaceChart()}
+            {renderAgeBandChart()}
+            {renderSexChart()}
+            {renderDisabilityChart()}
           </div>
         </div>
       </div>
