@@ -192,9 +192,9 @@ const CareManagementDashboard = () => {
     setIsModalVisible(true);
   };
 
-  const openProgressForm = () => {
-    setIsFormVisible(true);
-  };
+  // const openProgressForm = () => {
+  //   setIsFormVisible(true);
+  // };
 
   const closeProgressForm = () => {
     setIsFormVisible(false);
@@ -206,12 +206,12 @@ const CareManagementDashboard = () => {
     updateChartData();
   };
 
-  const deleteProgressDetails = (index) => {
-    const updatedProgressDetails = [...progressDetails];
-    updatedProgressDetails.splice(index, 1);
-    setProgressDetails(updatedProgressDetails);
-    updateChartData();
-  };
+  // const deleteProgressDetails = (index) => {
+  //   const updatedProgressDetails = [...progressDetails];
+  //   updatedProgressDetails.splice(index, 1);
+  //   setProgressDetails(updatedProgressDetails);
+  //   updateChartData();
+  // };
 
   const updateChartData = () => {
     const newData = progressDetails.map((entry, index) => ({
