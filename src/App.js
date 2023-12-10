@@ -5,7 +5,6 @@ import CareManagementDashboard from "./modules/careManagement/CareManagementDash
 import ReportingDashboard from "./modules/reporting/ReportingDashboard";
 import { ConfigProvider, theme } from "antd";
 import CaseManagerSelectionPage from "./modules/careManagement/CaseManagerSelectionPage";
-import CaseManagerSelectionPage from "./modules/careManagement/CaseManagerSelectionPage";
 
 function App() {
   return (
