@@ -1,46 +1,48 @@
 import React, { useState, useEffect } from "react";
 import {
   Layout,
-  Tabs,
+  Card,
   Collapse,
   Button,
   Select,
-  DatePicker,
   Modal,
   Form,
   Input,
   Slider,
-
 } from "antd";
-import axios from "axios"; 
+import axios from "axios";
 import moment from "moment";
 import { Table } from "antd";
-import { PlusCircleOutlined } from '@ant-design/icons'; 
+import { EditOutlined } from "@ant-design/icons";
+import { message } from "antd";
 
-
+const { Panel } = Collapse;
 
 const { TextArea } = Input;
-const { TabPane } = Tabs;
-const { Panel } = Collapse;
-const { Header, Content } = Layout;
+const { Content } = Layout;
 
-
-const servicesProgressNotes = () => {
-  const [isAddServiceModalVisible, setIsAddServiceModalVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState("1");
+const ServicesPage = (props) => {
+  const [form] = Form.useForm();
+  const [serviceProviders, setServiceProviders] = useState([]);
   const [appointments, setAppointments] = useState([]);
-  const [servicesRequested, setServicesRequested] = useState([]);
+  const [servicesList, setservicesList] = useState([]);
+  const [serviceRequests, setServiceRequests] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [editingAppointment, setEditingAppointment] = useState(null);
+  const [selectedPatient, setSelectedPatient] = useState(null);
   const [appointmentData, setAppointmentData] = useState({
+    id: "",
     date: "",
     serviceName: "",
+    serviceID: "", // Add this line
     patientName: "",
     location: "",
     serviceProvider: "",
-    patientId : ""
+    patientId: "",
   });
-  const [isProgressNoteModalVisible, setIsProgressNoteModalVisible] = useState(false);
+  const [isProgressNoteModalVisible, setIsProgressNoteModalVisible] =
+    useState(false);
   const [progressNoteData, setProgressNoteData] = useState({
     appointmentId: null,
     question1: 0,
@@ -49,147 +51,306 @@ const servicesProgressNotes = () => {
     question4: 0,
     feedback: "",
   });
-  const [serviceOptions, setServiceOptions] = useState([]);
   const [patientOptions, setPatientOptions] = useState([]);
-
-
   const [selectedServices, setSelectedServices] = useState([]);
-  const [selectedPatients, setSelectedPatients] = useState([]);
 
   useEffect(() => {
-    // Simulate fetching services and appointments data from APIs
     const fetchServicesData = async () => {
-
       try {
-        const servicesData = [
+        const serviceRequests = [
           {
-            id: 1,
-            name: "Service 1",
-            patient: "Patient A",
-            sessions: 5,
-            goal: "Goal A",
-            description: "Description A",
-            frequency: "once a week",
-            patientId: "123",
+            patientID: "1",
+            patientName: "John Doe",
+            vendorId: "1",
+            goals: [],
           },
           {
-            id: 2,
-            name: "Service 2",
-            patient: "Patient B",
-            sessions: 3,
-            goal: "Goal B",
-            description: "Description B",
-            patientId: "234",
+            patientID: "2",
+            patientName: "Jane Smith",
+            vendorId: "2",
+            goals: [],
+          },
+          {
+            patientID: "3",
+            patientName: "Alice Johnson",
+            vendorId: "1",
+            goals: [
+              {
+                goalId: "1",
+                goalName: "Improved Mobility",
+                services: [
+                  {
+                    serviceID: "6",
+                    serviceName: "Mobility Assistance",
+                    numberOfSessions: "60",
+                    frequency: "Twice a week",
+                  },
+                  {
+                    serviceID: "8",
+                    serviceName: "Transport Services",
+                    numberOfSessions: "60",
+                    frequency: "Twice a week",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            patientID: "4",
+            patientName: "Bob Brown",
+            vendorId: "2",
+            goals: [
+              {
+                goalId: "2",
+                goalName: "Home Upkeep",
+                services: [
+                  {
+                    serviceID: "1",
+                    serviceName: "House Cleaning",
+                    numberOfSessions: "30",
+                    frequency: "Once a month",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            patientID: "5",
+            patientName: "Emma Davis",
+            vendorId: "1",
+            goals: [
+              {
+                goalId: "3",
+                goalName: "Health Management",
+                services: [
+                  {
+                    serviceID: "4",
+                    serviceName: "Medication Reminder",
+                    numberOfSessions: "45",
+                    frequency: "Three times a week",
+                  },
+                  {
+                    serviceID: "10",
+                    serviceName: "Meal Preparation",
+                    numberOfSessions: "10",
+                    frequency: "Three times a week",
+                  },
+                  {
+                    serviceID: "7",
+                    serviceName: "Companion Care",
+                    numberOfSessions: "25",
+                    frequency: "Three times a week",
+                  },
+                  {
+                    serviceID: "5",
+                    serviceName: "Personal Care",
+                    numberOfSessions: "90",
+                    frequency: "Three times a week",
+                  },
+                ],
+              },
+            ],
           },
         ];
-      
-        const appointmentsData = [
-          {
-            id: 1,
-            patientId: "123",
-            service: "Service 1",
-            date: moment(),
-            patient: "Patient A",
-            serviceProvider: "Provider 1",
-            location: "Location A",
-          },
-          {
-            id: 2,
-            patientId: "123",
-            service: "Service 1",
-            date: moment(),
-            patient: "Patient A",
-            serviceProvider: "Provider 2",
-            location: "Location B",
-          },
-        ];
 
-
-
-        
-        // Set data in state
-        setServicesRequested(servicesData);
-        setAppointments(appointmentsData);
+        setServiceRequests(serviceRequests);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-
-  
-    // Fetch data when the component mounts
     fetchServicesData();
 
     const fetchServicesAndPatientsData = async () => {
       try {
-        // Fetch services data
-        const servicesResponse = await axios.get('/api/services');
-        setServiceOptions(servicesResponse.data.map(service => ({ 
-          id: service.id, 
-          name: service.name 
-        })));
+        const servicesResponse = await axios.get(
+          "https://team3-598fa58116f6.herokuapp.com/api/servicesOffered"
+        );
+        setservicesList(servicesResponse.data);
 
-        // Fetch patients data
-        const patientsResponse = await axios.get('/api/patients');
-        setPatientOptions(patientsResponse.data.map(patient => ({ 
-          id: patient.id, 
-          name: patient.name 
-        })));
-
-        // ... existing data fetching logic for services and appointments ...
-
+        const dummyPatientData = [
+          { id: "1", name: "John Doe" },
+          { id: "2", name: "Jane Smith" },
+          { id: "3", name: "Alice Johnson" },
+          { id: "4", name: "Bob Brown" },
+          { id: "5", name: "Emma Davis" },
+        ];
+        setPatientOptions(dummyPatientData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
+    const fetchBookingDetails = async () => {
+      try {
+        const response = await axios.get(
+          "https://team3-598fa58116f6.herokuapp.com/api/bookings/all"
+        );
+        const transformedBookings = response.data.map((booking) =>
+          transformBookingDetail(booking)
+        );
+        setAppointments(transformedBookings);
+      } catch (error) {
+        console.error("Error fetching booking details:", error);
+      }
+    };
+    fetchBookingDetails();
     fetchServicesAndPatientsData();
-
   }, []);
 
+  const handleEditClick = (appointment) => {
+    setEditingAppointment({ ...appointment });
+    fetchServiceProviders(appointment.serviceID);
+    setIsEditModalVisible(true);
+  };
+  const handleEditSave = async () => {
+    try {
+      const dateTimeForApi = editingAppointment.date + "T21:00:00";
+
+      const updatedAppointmentForApi = {
+        ...editingAppointment,
+        endTime: dateTimeForApi,
+        serviceId: editingAppointment.serviceID,
+      };
+
+      const appointmentId = editingAppointment.id;
+
+      axios
+        .put(
+          `https://team3-598fa58116f6.herokuapp.com/api/bookings/edit/${appointmentId}`,
+          updatedAppointmentForApi
+        )
+        .then((response) => {
+          // ...existing logic...
+          message.success("Appointment updated successfully.");
+        })
+        .catch((error) => {
+          console.error("Error updating appointment:", error);
+          message.error("Failed to update appointment.");
+        });
+
+      const updatedAppointments = appointments.map((appointment) =>
+        appointment.id === editingAppointment.id
+          ? {
+              ...appointment,
+              date: editingAppointment.date,
+            }
+          : appointment
+      );
+      setAppointments(updatedAppointments);
+
+      setTimeout(() => {
+        setIsEditModalVisible(false);
+      }, 500);
+    } catch (error) {
+      console.error("Error updating appointment:", error);
+    }
+  };
+
+  const transformBookingDetail = (booking) => {
+    let date = booking.endTime ? booking.endTime.split("T")[0] : "";
+    if (!date && booking.startTime) {
+      date = booking.startTime.split("T")[0];
+    }
+    return {
+      id: booking.bookingId,
+      date: date,
+      serviceName: "",
+      serviceID: booking.serviceId,
+      patientName: "",
+      location: "New Jersey",
+      serviceProvider: booking.employeeId,
+      patientId: booking.patientId,
+    };
+  };
+
+  const fetchServiceProviders = async (serviceId) => {
+    console.log(serviceId);
+    try {
+      const response = await axios.get(
+        `https://team3-598fa58116f6.herokuapp.com/api/service-employees/skill/${serviceId}`
+      );
+      setServiceProviders(response.data);
+    } catch (error) {
+      console.error("Error fetching service providers:", error);
+      setServiceProviders([]);
+    }
+  };
+
   const onServiceSelectionChange = (selectedServiceIds) => {
-    setSelectedServices(selectedServiceIds);
+    setSelectedServices(selectedServiceIds.map((id) => id.toString()));
   };
+  const filteredServiceRequests = serviceRequests
+    .filter((request) => {
+      const patientMatch = selectedPatient
+        ? request.patientID === selectedPatient
+        : true;
 
-  const onPatientSelectionChange = (selectedPatientIds) => {
-    setSelectedPatients(selectedPatientIds);
-  };
+      const serviceMatch =
+        selectedServices.length > 0
+          ? request.goals.some((goal) =>
+              goal.services.some((service) =>
+                selectedServices.includes(service.serviceID.toString())
+              )
+            )
+          : true;
 
-  const filteredServices = servicesRequested.filter(
-    service => selectedServices.length === 0 || selectedServices.includes(service.id.toString())
-  );
+      return patientMatch && serviceMatch;
+    })
+    .map((request) => {
+      if (selectedServices.length > 0) {
+        const filteredGoals = request.goals.map((goal) => {
+          return {
+            ...goal,
+            services: goal.services.filter((service) =>
+              selectedServices.includes(service.serviceID.toString())
+            ),
+          };
+        });
 
-  const filteredAppointments = appointments.filter(
-    appointment => selectedPatients.length === 0 || selectedPatients.includes(appointment.patientId)
-  );
+        return {
+          ...request,
+          goals: filteredGoals,
+        };
+      } else {
+        return request;
+      }
+    });
 
-  const handleAddService = (values) => {
-    console.log('Received values of form: ', values);
-    setIsAddServiceModalVisible(false);
-    // Here you would typically send data to the backend or update the state
-  };
-
-  const showAddServiceModal = () => {
-    setIsAddServiceModalVisible(true);
+  const onPatientSelectionChange = (selectedPatientId) => {
+    setSelectedPatient(selectedPatientId);
   };
 
   const handleProgressNoteSave = () => {
-    // Replace with your actual API endpoint
+    const progressNoteDataForApi = {
+      bookingId: progressNoteData.appointmentId,
 
-    // axios.post('your_api_endpoint_here', progressNoteData)
-    //   .then((response) => {
-    //     // Handle successful save
-    //     setIsProgressNoteModalVisible(false);
-    //     // Optionally reset progressNoteData or update state based on response
-    //   })
-    //   .catch((error) => {
-    //     // Handle errors
-    //     console.error("Error saving progress note:", error);
-    //   });
+      goalId: progressNoteData.goalId || null,
+      overallSessionQuality: progressNoteData.question1,
+      serviceProviderPerformance: progressNoteData.question2,
+      meetingElderlyNeeds: progressNoteData.question3,
+      communicationResponsiveness: progressNoteData.question4,
+    };
 
-      console.log(progressNoteData)
-      setIsProgressNoteModalVisible(false);
+    axios
+      .post(
+        "https://team3-598fa58116f6.herokuapp.com/api/progress_notes/add",
+        progressNoteDataForApi
+      )
+      .then((response) => {
+        message.success("Progress note saved successfully.");
+
+        console.log(response.data);
+        setIsProgressNoteModalVisible(false);
+      })
+      .catch((error) => {
+        message.error("Failed to save progress note.");
+        console.error("Error saving progress note:", error);
+      });
+
+    setIsProgressNoteModalVisible(false);
   };
+
   const renderProgressNoteModal = () => (
     <Modal
       title="Progress Note"
@@ -198,23 +359,75 @@ const servicesProgressNotes = () => {
       onCancel={() => setIsProgressNoteModalVisible(false)}
     >
       <Form layout="vertical">
-        {[1, 2, 3, 4].map((num) => (
-          <Form.Item label={`Question ${num}`} key={num}>
-            <Slider
-              min={0}
-              max={10}
-              onChange={(value) =>
-                setProgressNoteData({ ...progressNoteData, [`question${num}`]: value })
-              }
-              value={progressNoteData[`question${num}`]}
-            />
-          </Form.Item>
-        ))}
-        <Form.Item label="Feedback">
+        <Form.Item label={<strong>Overall Session Quality</strong>}>
+          <p>Rate the overall quality of this session on a scale of 1 to 5.</p>
+          <Slider
+            min={1}
+            max={5}
+            onChange={(value) =>
+              setProgressNoteData({
+                ...progressNoteData,
+                question1: value,
+              })
+            }
+            value={progressNoteData.question1}
+          />
+        </Form.Item>
+        <Form.Item label={<strong>Service Provider's Performance</strong>}>
+          <p>
+            Rate your satisfaction with the caregiver's professionalism and
+            care.
+          </p>
+          <Slider
+            min={1}
+            max={5}
+            onChange={(value) =>
+              setProgressNoteData({
+                ...progressNoteData,
+                question2: value,
+              })
+            }
+            value={progressNoteData.question2}
+          />
+        </Form.Item>
+        <Form.Item label={<strong>Meeting Elderly Needs</strong>}>
+          <p>How well do our services meet the elderly individual's needs?</p>
+          <Slider
+            min={1}
+            max={5}
+            onChange={(value) =>
+              setProgressNoteData({
+                ...progressNoteData,
+                question3: value,
+              })
+            }
+            value={progressNoteData.question3}
+          />
+        </Form.Item>
+        <Form.Item label={<strong>Communication and Responsiveness</strong>}>
+          <p>
+            Rate our staff's communication and responsiveness to your needs.
+          </p>
+          <Slider
+            min={1}
+            max={5}
+            onChange={(value) =>
+              setProgressNoteData({
+                ...progressNoteData,
+                question4: value,
+              })
+            }
+            value={progressNoteData.question4}
+          />
+        </Form.Item>
+        <Form.Item label={<strong>Additional Feedback</strong>}>
           <TextArea
             rows={4}
             onChange={(e) =>
-              setProgressNoteData({ ...progressNoteData, feedback: e.target.value })
+              setProgressNoteData({
+                ...progressNoteData,
+                feedback: e.target.value,
+              })
             }
             value={progressNoteData.feedback}
           />
@@ -223,74 +436,90 @@ const servicesProgressNotes = () => {
     </Modal>
   );
 
-  const showProgressNoteModal = (appointmentId) => {
-    // API call to fetch existing data (if any) using appointmentId
-    // axios.get(`/api/progressNote/${appointmentId}`).then((response) => {
-    //   setProgressNoteData(response.data);
-    // });
-    setProgressNoteData({ ...progressNoteData, appointmentId });
+  const showProgressNoteModal = async (appointmentId) => {
+    try {
+      const response = await axios.get(
+        `https://team3-598fa58116f6.herokuapp.com/api/progress-notes/booking/${appointmentId}`
+      );
+      if (response?.data?.length > 0) {
+        const noteData = response.data[0];
+        setProgressNoteData({
+          appointmentId: appointmentId,
+          question1: noteData.overallSessionQuality || 0,
+          question2: noteData.serviceProviderPerformance || 0,
+          question3: noteData.meetingElderlyNeeds || 0,
+          question4: noteData.communicationResponsiveness || 0,
+          feedback: noteData.additionalFeedback || "",
+        });
+      } else {
+        setProgressNoteData({
+          appointmentId: appointmentId,
+          question1: 0,
+          question2: 0,
+          question3: 0,
+          question4: 0,
+          feedback: "",
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching progress note data:", error);
+
+      setProgressNoteData({
+        appointmentId: appointmentId,
+        question1: 0,
+        question2: 0,
+        question3: 0,
+        question4: 0,
+        feedback: "",
+      });
+    }
     setIsProgressNoteModalVisible(true);
   };
 
-  const handleTabChange = (key) => {
-    setActiveTab(key);
-  };
-
-  const showCreateAppointmentModal = (service) => {
-    setAppointmentData({
-      serviceName: service.name,
-      patientName: service.patient,
-      patientId: service.patientId,
-      location: "",
-      serviceProvider: "",
-    });
-    setIsModalVisible(true);
-  };
-  const dummyServiceOptions = [
-    { id: '1', name: 'Service 1' },
-    { id: '2', name: 'Service 2' },
-    { id: '3', name: 'Service 3' },
-    // ... more dummy services ...
-  ];
-
-  const dummyPatientOptions = [
-    { id: '1', name: 'Patient A' },
-    { id: '2', name: 'Patient B' },
-    { id: '3', name: 'Patient C' },
-    // ... more dummy patients ...
-  ];
-
   const handleAppointmentSave = () => {
-    const newAppointment = {
-      id: appointments.length + 1,
-      service: appointmentData.serviceName,
-      date: moment(appointmentData.date, "YYYY-MM-DD"),
-      patient: appointmentData.patientName,
-      serviceProvider: appointmentData.serviceProvider,
-      location: appointmentData.location,
-      patientId : appointmentData.patientId
-    };
+    form
+      .validateFields()
+      .then((values) => {
+        const newAppointmentRequest = {
+          employeeId: appointmentData.employeeId,
+          endTime: appointmentData.date + "T21:00:00",
+          patientId: parseInt(appointmentData.patientId, 10),
+          remarks: appointmentData.remarks || "No remarks",
+          serviceId: parseInt(appointmentData.serviceID, 10),
+          startTime: appointmentData.date + "T09:00:00",
+          status: appointmentData.status || "Scheduled",
+        };
 
-    setAppointments([...appointments, newAppointment]);
+        axios
+          .post(
+            "https://team3-598fa58116f6.herokuapp.com/api/bookings/add",
+            newAppointmentRequest
+          )
+          .then((response) => {
+            message.success("Appointment saved successfully.");
 
-    setTimeout(() => {
-      setIsModalVisible(false);
-      setAppointmentData({
-        date: "",
-        serviceProvider: "",
-        serviceName: "",
-        patientName: "",
-        location: "",
-        patientId : ""
+            // Handle response
+            // ... rest of your logic ...
+          })
+          .catch((error) => {
+            console.error("Error saving appointment:", error);
+            message.error("Failed to save appointment.");
+          });
+
+        setIsModalVisible(false);
+      })
+      .catch((info) => {
+        console.error("Validate Failed:", info);
       });
-    }, 500);
   };
+
   const renderFilters = () => (
     <div className="filter-container">
       <Select
         showSearch
         mode="multiple"
         allowClear
+        onChange={onServiceSelectionChange}
         placeholder="Select services"
         data-testid="service-selector"
         style={{ width: "40%", margin: "10px" }}
@@ -298,47 +527,63 @@ const servicesProgressNotes = () => {
           option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
         }
       >
-        {servicesRequested.map((service) => (
-          <Select.Option key={service.id} value={service.name}>
-            {service.name}
+        {servicesList.map((service) => (
+          <Select.Option key={service.id} value={service.id.toString()}>
+            {service.serviceName}
           </Select.Option>
         ))}
       </Select>
-  
+
       <Select
         showSearch
         allowClear
         placeholder="Select patient"
-        data-testid="patient-selector"
         style={{ margin: "10px", width: "30%" }}
+        onChange={onPatientSelectionChange} // Handle selection change
         filterOption={(input, option) =>
           option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
         }
       >
-        {servicesRequested.map((service) => (
-          <Select.Option key={service.patientId} value={service.patient}>
-            {service.patient}
+        {patientOptions.map((patient) => (
+          <Select.Option key={patient.id} value={patient.id}>
+            {patient.name}
           </Select.Option>
         ))}
       </Select>
-  
-      {/* Conditional rendering for the date range picker */}
-      {activeTab === "2" && (
-        <DatePicker.RangePicker data-testid="date-range-picker" />
-      )}
-
-
     </div>
   );
-  
-  
 
-  const renderServiceInfo = (service) => {
-    const filteredAppointments = appointments.filter(
-      (appointment) =>
-        appointment.patientId === service.patientId &&
-        appointment.service === service.name
-    );
+  const renderServicesRequests = (patient, service, showProgressNoteModal) => {
+    const filteredAppointments = appointments.filter((appointment) => {
+      return (
+        parseInt(appointment.patientId) === parseInt(patient.patientID) &&
+        parseInt(appointment.serviceID) === parseInt(service.serviceID)
+      );
+    });
+
+    const handleCreateAppointment = async (patientID, serviceName) => {
+      const patient = serviceRequests.find((p) => p.patientID === patientID);
+
+      let selectedService = null;
+      for (const goal of patient.goals) {
+        selectedService = goal.services.find(
+          (s) => s.serviceName === serviceName
+        );
+        if (selectedService) break;
+      }
+
+      await fetchServiceProviders(selectedService?.serviceID);
+
+      setAppointmentData({
+        ...appointmentData,
+        patientId: patientID,
+        patientName: patient.patientName,
+        serviceName: selectedService.serviceName,
+        serviceID: selectedService?.serviceID,
+      });
+
+      setIsModalVisible(true);
+    };
 
     const columns = [
       {
@@ -362,82 +607,172 @@ const servicesProgressNotes = () => {
         dataIndex: "location",
         key: "location",
       },
+      {
+        title: "Progress Note",
+        dataIndex: "id",
+        key: "progressNote",
+        render: (text, appointment) => (
+          <Button
+            type="link"
+            className="note-button"
+            onClick={() => showProgressNoteModal(appointment.id)}
+          >
+            Progress Note
+          </Button>
+        ),
+      },
+      {
+        title: "Edit",
+        dataIndex: "",
+        key: "edit",
+        render: (_, appointment) => (
+          <EditOutlined onClick={() => handleEditClick(appointment)} />
+        ),
+      },
     ];
 
     return (
-      <div className="service-info">
-        <p>Patient Name: {service.patient}</p>
-        <p>Patient Id: {service.patientId}</p>
-        <p>Number of Sessions: {service.sessions}</p>
-        <p>Goal of the Patient: {service.goal}</p>
-        <p>Frequency of the service: {service.frequency}</p>
-
-        <Table
-          dataSource={filteredAppointments}
-          columns={columns}
-          rowKey="id"
-          pagination={false}
-        />
-
-        <Button
-          type="primary"
-          onClick={() => showCreateAppointmentModal(service)}
-          style={{ margin: "10px" }}
+      <div>
+        <div
+          className="service-info"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
-          Create Appointment
-        </Button>
+          <div>
+            <p>
+              <strong>Patient Name:</strong> {patient.patientName}
+            </p>
+            <p>
+              <strong>Patient ID:</strong> {patient.patientID}
+            </p>
+            <p>
+              <strong>Service Name:</strong> {service.serviceName}
+            </p>
+            <p>
+              <strong>Service ID:</strong> {service.serviceID}
+            </p>
+          </div>
+          <div>
+            <p>
+              <strong>Number of Sessions:</strong> {service.numberOfSessions}
+            </p>
+            <p>
+              <strong>Frequency:</strong> {service.frequency}
+            </p>
+          </div>
+          <Button
+            type="primary"
+            onClick={() =>
+              handleCreateAppointment(patient.patientID, service.serviceName)
+            }
+            style={{ margin: "10px" }}
+          >
+            Create Appointment
+          </Button>
+        </div>
+        <Collapse>
+          <Panel header="View Appointments" key="1">
+            <Table
+              dataSource={filteredAppointments}
+              columns={columns}
+              rowKey="id"
+              pagination={false}
+            />
+          </Panel>
+        </Collapse>
       </div>
     );
   };
 
-  const renderAppointmentInfo = (appointment) => (
-    <div className="appointment-info">
-      <p>Appointment ID: {appointment.id}</p>
-      <p>Patient Name: {appointment.patient}</p>
-      <p>Date of Appointment: {appointment.date.format("YYYY-MM-DD")}</p>
-      <p>Location: {appointment.location}</p>
-      <Button
-        type="link"
-        className="note-button"
-        onClick={() => showProgressNoteModal(appointment.id)}
+  const renderEditModal = () => {
+    if (!editingAppointment) return null;
+
+    return (
+      <Modal
+        title="Edit Appointment"
+        visible={isEditModalVisible}
+        onOk={handleEditSave}
+        onCancel={() => setIsEditModalVisible(false)}
       >
-        Progress Note
-      </Button>
-    </div>
-  );
+        <Form layout="vertical">
+          <Form.Item label="Service Name">
+            <Input value={editingAppointment?.service} disabled />
+          </Form.Item>
+          <Form.Item label="Patient Id">
+            <Input value={editingAppointment?.patientId} disabled />
+          </Form.Item>
+          <Form.Item
+            label="Date of Appointment"
+            name="date"
+            rules={[{ required: true, message: "Please select a date!" }]}
+          >
+            <input
+              type="date"
+              defaultValue={editingAppointment?.date}
+              onChange={(e) =>
+                setEditingAppointment({
+                  ...editingAppointment,
+                  date: e.target.value,
+                })
+              }
+            />
+          </Form.Item>
+          <Form.Item label="Location">
+            <Select
+              value="New Jersey"
+              disabled={true}
+              style={{ width: "100%" }}
+            >
+              <Select.Option value="New Jersey">New Jersey</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label="Service Provider">
+            <Select
+              value={editingAppointment?.serviceProvider}
+              onChange={(value) =>
+                setEditingAppointment({
+                  ...editingAppointment,
+                  serviceProvider: value,
+                })
+              }
+            >
+              {serviceProviders.map((provider) => (
+                <Select.Option key={provider.id} value={provider.name}>
+                  {provider.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+    );
+  };
 
   return (
-    <Layout className="layout">
+    <Layout className="layout" style={{ backgroundColor: "#f0f0f0" }}>
       <Content className="content">
-        <Tabs defaultActiveKey="1" onChange={handleTabChange} className="tabs">
-          <TabPane tab="Services" key="1">
-            {renderFilters()}
-            <Collapse>
-              {servicesRequested.map((service, index) => (
-                <Panel
-                  header={`${service.name} - ${service.patient} - ${service.id}`}
-                  key={service.id}
+        {renderFilters()}
+        <div>
+          {filteredServiceRequests.map((patient) =>
+            patient.goals.flatMap((goal) =>
+              goal.services.map((service) => (
+                <Card
+                  key={`${patient.patientID}-${service.serviceID}`}
+                  style={{ marginBottom: 16 }}
                 >
-                  {renderServiceInfo(service)}
-                </Panel>
-              ))}
-            </Collapse>
-          </TabPane>
-          <TabPane tab="Appointments" key="2">
-            {renderFilters()}
-            <Collapse>
-              {appointments.map((appointment, index) => (
-                <Panel
-                  header={`${appointment.id} - ${appointment.service
-                    } - ${appointment.date.format("YYYY-MM-DD")}`}
-                  key={appointment.id}
-                >
-                  {renderAppointmentInfo(appointment)}
-                </Panel>
-              ))}
-            </Collapse>
-          </TabPane>
-        </Tabs>
+                  {renderServicesRequests(
+                    patient,
+                    service,
+                    showProgressNoteModal
+                  )}
+                </Card>
+              ))
+            )
+          )}
+        </div>
 
         <Modal
           title="Create Appointment"
@@ -445,126 +780,62 @@ const servicesProgressNotes = () => {
           onOk={handleAppointmentSave}
           onCancel={() => setIsModalVisible(false)}
         >
-          <Form layout="vertical">
-            <Form.Item label="Service Name">
-              <Input value={appointmentData.serviceName} disabled />
-            </Form.Item>
-            <Form.Item label="Patient Id">
-              <Input value={appointmentData.patientId} disabled />
-            </Form.Item>
-            <Form.Item label="Date of Appointment">
-              <DatePicker
-                onChange={(date, dateString) =>
-                  setAppointmentData({ ...appointmentData, date: dateString })
+          <Form layout="vertical" form={form}>
+            <h3 style={{ fontWeight: "bold", marginBottom: "10px" }}>
+              Service: {appointmentData.serviceName}
+            </h3>
+            <h3 style={{ fontWeight: "bold", marginBottom: "10px" }}>
+              Patient ID: {appointmentData.patientId}
+            </h3>
+            <Form.Item
+              label="Date of Appointment"
+              name="date"
+              rules={[{ required: true, message: "Please select a date!" }]}
+            >
+              <input
+                type="date"
+                onChange={(e) =>
+                  setAppointmentData({
+                    ...appointmentData,
+                    date: e.target.value,
+                  })
                 }
               />
             </Form.Item>
             <Form.Item label="Location">
               <Select
-                value={appointmentData.location}
-                onChange={(value) =>
-                  setAppointmentData({ ...appointmentData, location: value })
-                }
+                value="New Jersey"
+                disabled={true}
                 style={{ width: "100%" }}
               >
-                <Select.Option value="Location A">Location A</Select.Option>
-                <Select.Option value="Location B">Location B</Select.Option>
+                <Select.Option value="New Jersey">New Jersey</Select.Option>
               </Select>
             </Form.Item>
             <Form.Item label="Service Provider">
               <Select
                 value={appointmentData.serviceProvider}
                 onChange={(value) =>
-                  setAppointmentData({ ...appointmentData, serviceProvider: value })
+                  setAppointmentData({
+                    ...appointmentData,
+                    serviceProvider: value,
+                  })
                 }
               >
-                <Select.Option value="provider1">Provider 1</Select.Option>
-                <Select.Option value="provider2">Provider 2</Select.Option>
+                {serviceProviders.map((provider) => (
+                  <Select.Option key={provider.id} value={provider.name}>
+                    {provider.name}
+                  </Select.Option>
+                ))}
               </Select>
             </Form.Item>
           </Form>
         </Modal>
+
         {renderProgressNoteModal()}
-
-        {/* Conditional rendering of the add button at the bottom right corner */}
-        {activeTab === "1" && (
-          <Button 
-            icon={<PlusCircleOutlined />} 
-            style={{ 
-              position: 'absolute', 
-              bottom: '20px', 
-              right: '20px',
-              backgroundColor: 'white', 
-              borderColor: 'gray' 
-            }}
-            onClick={showAddServiceModal} 
-
-          >
-            Add Service
-          </Button>
-        )}
-  <Modal
-          title="Add New Service"
-          visible={isAddServiceModalVisible}
-          onCancel={() => setIsAddServiceModalVisible(false)}
-          footer={null}
-        >
-          <Form onFinish={handleAddService}>
-            <Form.Item
-              name="serviceName"
-              label="Service Name"
-              rules={[{ required: true, message: 'Please input the service name!' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="employees"
-              label="Employees"
-              rules={[{ required: true, message: 'Please add at least one employee!' }]}
-            >
-              <Select mode="multiple" placeholder="Select employees">
-                {/* Options for employees */}
-              </Select>
-            </Form.Item>
-            <Form.Item
-              name="location"
-              label="Location"
-              rules={[{ required: true, message: 'Please input the location of the service!' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form>
-        </Modal>
+        {renderEditModal()}
       </Content>
     </Layout>
   );
 };
 
-export default servicesProgressNotes;
-
-
-
-
-
-
-  // // Make a POST request to save the new appointment
-  // axios
-  // .post("your_api_endpoint_here", newAppointment) // Replace with your actual API endpoint
-  // .then((response) => {
-  //   // Assuming the response contains the updated list of appointments
-  //   const updatedAppointments = response.data;
-
-  //   // Update the state with the updated appointments
-  //   setAppointments(updatedAppointments);
-
-  //   // Set a half-second delay before closing the modal
-    
-  // })
-  // .catch((error) => {
-  //   console.error("Error saving appointment:", error);
-  //   // Handle any error that may occur during the API call
-  // });
-  
+export default ServicesPage;

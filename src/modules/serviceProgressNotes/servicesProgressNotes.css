@@ -1,50 +1,52 @@
 .layout {
-    min-height: 100vh;
-  }
-  
-  .header {
-    background-color: #f0f2f5 !important; /* Dark blue header */
-    padding: 0 20px;
-    line-height: 64px; /* Adjust height to match Ant Design's default */
-  }
-  
-  
-  .content {
-    padding: 24px;
-    background-color: #fff; /* White background for content */
-  }
-  
-  .tabs .ant-tabs-nav .ant-tabs-tab-active {
-    color: #1890ff; /* Highlight color for active tab */
-  }
-  
-  .segmented-button .ant-btn-primary {
-    background-color: #1890ff;
-    border-color: #1890ff;
-    color: #fff;
-  }
-  
-  /* Styling for the service and appointment information */
-  .service-info, .appointment-info {
-    padding: 16px;
-    border-bottom: 1px solid #f0f0f5;
-  }
-  
-  .note-button, .close-button {
-    margin-right: 8px;
-  }
-  
-  
-  /* Ensure proper spacing between buttons */
-  .segmented-button button {
-    margin-right: 8px;
-  }
-  
-  /* Remove margin from the last button */
-  .segmented-button button:last-child {
-    margin-right: 0;
-  }
-  
-  
-  
-  
+  min-height: 100vh;
+}
+
+.header {
+  background-color: #f0f2f5 !important; /* Dark blue header */
+  padding: 0 20px;
+  line-height: 64px; /* Adjust height to match Ant Design's default */
+}
+
+
+.content {
+  padding: 24px;
+  background-color: #F5F5F5; /* White background for content */
+}
+
+.tabs .ant-tabs-nav .ant-tabs-tab-active {
+  color: #1890ff; /* Highlight color for active tab */
+}
+
+.segmented-button .ant-btn-primary {
+  background-color: #1890ff;
+  border-color: #1890ff;
+  color: #fff;
+}
+
+/* Styling for the service and appointment information */
+.service-info, .appointment-info {
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f5;
+}
+
+.note-button, .close-button {
+  margin-right: 8px;
+}
+
+
+/* Ensure proper spacing between buttons */
+.segmented-button button {
+  margin-right: 8px;
+}
+
+/* Remove margin from the last button */
+.segmented-button button:last-child {
+  margin-right: 0;
+}
+
+
+
+
+
+
