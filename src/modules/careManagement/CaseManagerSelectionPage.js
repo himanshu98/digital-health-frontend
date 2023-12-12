@@ -22,6 +22,10 @@ const CaseManagerSelectionPage = () => {
       dataIndex: 'status',
     },
     {
+      title: 'Contact No.',
+      dataIndex: 'contactNo',
+    },
+    {
       title: 'Actions',
       render: (text, record) => (
         <Dropdown
@@ -59,18 +63,21 @@ const CaseManagerSelectionPage = () => {
       key: '1',
       name: 'Case Manager 1',
       email: 'manager1@example.com',
+      contactNo:"8623810102",
       status: 'Active',
     },
     {
       key: '2',
       name: 'Case Manager 2',
       email: 'manager2@example.com',
+      contactNo:"8623810102",
       status: 'Active',
     },
     {
       key: '3',
       name: 'Case Manager 3',
       email: 'manager3@example.com',
+      contactNo:"8623810102",
       status: 'Active',
     },
     // Add more case manager data here
