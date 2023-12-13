@@ -9,14 +9,14 @@ import CaseManagerSelectionPage from "./modules/careManagement/CaseManagerSelect
 function App() {
   return (
     <ConfigProvider
-      theme={{       
+      theme={{
         algorithm: [theme.compactAlgorithm],
       }}
     >
       <div className="App">
         <Router>
           <Switch>
-          <Route path="/casemanager" component={CaseManagerSelectionPage} />
+            <Route path="/casemanager" component={CaseManagerSelectionPage} />
             <Route
               exact
               path="/careManagement"
