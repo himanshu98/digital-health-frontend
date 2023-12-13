@@ -10,6 +10,8 @@ import {
   Button,
   Row,
   Col,
+  Spin,
+  notification
 } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import CommunityEventsDetails from "./CommunityEventsDetails";
@@ -54,6 +56,24 @@ const EditableCell = ({
   );
 };
 const CommunityEvents = () => {
+  // notifications
+  const [api, contextHolder] = notification.useNotification();
+  
+  const openNotificationWithIcon = (type, data) => {
+    api[type]({
+      message: data.message,
+      description: (
+        <>
+          <div>
+            <span style={{ color: data.color, fontWeight: "bold" }}>
+              Description: 
+            </span>{" "}
+            {data.description}
+          </div>
+        </>
+      ),
+    });
+  };
   const [form] = Form.useForm();
   const [data, setData] = useState(originData);
   const [editingKey, setEditingKey] = useState("");
@@ -89,13 +109,16 @@ const CommunityEvents = () => {
       );
       if (response.status === 200) {
         console.log("Record updated successfully");
+        openNotificationWithIcon('success', {color:"#52c41a" , message: "Success", description: "Record updated successfully"});
         fetchCommunityActivities();
       } else {
+        openNotificationWithIcon('error', {color:"#ff4d4f" , message: "Failed", description: "Failed to update record"});
         console.error("Failed to update record");
       }
       setEditingKey("");
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
+      openNotificationWithIcon('error', {color:"#ff4d4f" , message: "Validate Failed:", description: errInfo});
     }
   };
 
@@ -250,13 +273,16 @@ const CommunityEvents = () => {
 
       if (response.status === 200) {
         // Successfully deleted the record
+        openNotificationWithIcon('success', {color:"#52c41a" , message: "Success", description: "Record deleted successfully"});
         console.log("Record deleted successfully");
         // Refresh the data after deletion
         fetchCommunityActivities();
       } else {
+        openNotificationWithIcon('error', {color:"#ff4d4f" , message: "Failed", description: "Failed to delete record"});
         console.error("Failed to delete record");
       }
     } catch (error) {
+      openNotificationWithIcon('error', {color:"#ff4d4f" , message: "Error deleting record", description: error});
       console.error("Error deleting record:", error);
     }
   };
@@ -283,6 +309,8 @@ const CommunityEvents = () => {
       console.log(newData);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -294,8 +322,12 @@ const CommunityEvents = () => {
     // Fetch data again after adding a new event
     fetchCommunityActivities();
   };
+
+  const [loading, setLoading] = useState(true);
+
   return (
     <>
+    {contextHolder}
       <div className="patient" style={{ padding: "20px" }}>
         <Row>
           <Col span={24}>
@@ -315,6 +347,9 @@ const CommunityEvents = () => {
           setVisibility={setCloseDrawer}
           onEventAdded={handleEventAdded}
         />
+        {loading ? (
+          <Spin size="large" style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}/>
+        ) : (
         <Form form={form} component={false}>
           <Table
             components={{
@@ -331,6 +366,7 @@ const CommunityEvents = () => {
             }}
           />
         </Form>
+        )}
       </div>
     </>
   );

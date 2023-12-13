@@ -1,23 +1,45 @@
-import {
-  Table,
-  // Input,
-  // Select,
-  Row,
-  Col,
-  Button,
-  // Space,
-  Typography,
-} from "antd";
-import React, { useState, useEffect } from "react";
+import { Table, Row, Col, Button, Typography, notification, Spin } from "antd";
+import React, { useState, useEffect, useRef } from "react";
 import ServiceProviderDetails from "./ServiceProviderDetails";
-import axios from "axios"; // Import Axios
-
+import axios from "axios";
 import "./ServiceProvider.css";
 
-// const { Option } = Select;
 const { Title } = Typography;
 
 const ServiceProvider = () => {
+  // notification
+  const [api, contextHolder] = notification.useNotification();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const openNotificationWithIcon = (type, error) => {
+    const statusCode = error.response?.status || "N/A";
+    const statusText = error.response?.statusText || "N/A";
+    const errorMessage = error.response?.data?.detail || "N/A";
+    api[type]({
+      message: "Server Error",
+      description: (
+        <>
+          <div>
+            <span style={{ color: "#ff4d4f", fontWeight: "bold" }}>
+              Status Code:
+            </span>{" "}
+            {statusCode}
+          </div>
+          <div>
+            <span style={{ color: "#ff4d4f", fontWeight: "bold" }}>
+              Status Text:
+            </span>{" "}
+            {statusText}
+          </div>
+          <div>
+            <span style={{ color: "#ff4d4f", fontWeight: "bold" }}>
+              Error Message:
+            </span>{" "}
+            {errorMessage}
+          </div>
+        </>
+      ),
+    });
+  };
   // Open drawer on click of name
   const [openedDrawerKey, setOpenedDrawerKey] = useState(null);
   const openDrawer = (key) => {
@@ -68,43 +90,20 @@ const ServiceProvider = () => {
       key: "location",
     },
     {
-      key: 'recentVisits'
-    }
+      key: "recentVisits",
+    },
   ];
   let data = [];
   const [filteredData, setFilteredData] = useState(data);
-  // const [nameFilter, setNameFilter] = useState("");
-  // const [phoneFilter, setPhoneFilter] = useState("");
-  // const [genderFilter, setGenderFilter] = useState("null");
+  const notificationShownRef = useRef(false);
+  const [loading, setLoading] = useState(true);
 
-  // const handleSearch = () => {
-  //   const filteredResults = data.filter((item) => {
-  //     const nameMatch = item.name
-  //       .toLowerCase()
-  //       .includes(nameFilter.toLowerCase());
-  //     const phoneMatch = item.contact.includes(phoneFilter);
-  //     const genderMatch =
-  //       genderFilter === "null" || item.gender === genderFilter;
-
-  //     return nameMatch && phoneMatch && genderMatch;
-  //   });
-
-  //   setFilteredData(filteredResults);
-  // };
-
-  // const clearFilters = () => {
-  //   setNameFilter("");
-  //   setPhoneFilter("");
-  //   setGenderFilter("null");
-  //   setFilteredData(data);
-  // };
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
           "https://dev-sdpm-reports-a58e8c221a46.herokuapp.com/serviceproviderreport"
         );
-        console.log(response.data); // Log the API response
         const updatedData = response.data.services.map((service, index) => ({
           key: index + 1,
           id: index + 1,
@@ -113,70 +112,40 @@ const ServiceProvider = () => {
           description: service.description,
           service_type: service.serviceType,
           location: service.location,
-          recentVisits: service.recentVisits
+          recentVisits: service.recentVisits,
         }));
         setFilteredData(updatedData);
       } catch (error) {
+        if (!notificationShownRef.current) {
+          openNotificationWithIcon("error", error);
+          notificationShownRef.current = true;
+        }
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
-
     fetchData();
-  }, []);
+  });
 
   return (
     <>
+      {contextHolder}
       <div className="patient" style={{ padding: "20px" }}>
         <Row>
           <Col span={24}>
             <Title level={2}>Service Provider Reports</Title>
           </Col>
         </Row>
-        {/* <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-          <Col>
-            <h3 className="sub-heading">Filters</h3>
-          </Col>
-          <Col>
-            <Input
-              placeholder="Search by name"
-              value={nameFilter}
-              onChange={(e) => setNameFilter(e.target.value)}
-            />
-          </Col>
-          <Col>
-            <Input
-              placeholder="Search by Phone #"
-              value={phoneFilter}
-              onChange={(e) => setPhoneFilter(e.target.value)}
-            />
-          </Col>
-          <Col>
-            <Select
-              defaultValue="Gender"
-              value={genderFilter}
-              onChange={(value) => setGenderFilter(value)}
-            >
-              <Option value="null" disabled>
-                Gender
-              </Option>
-              <Option value="male">Male</Option>
-              <Option value="female">Female</Option>
-            </Select>
-          </Col>
-          <Col>
-            <Space wrap>
-              <Button type="primary" onClick={handleSearch}>
-                Search
-              </Button>
-              <Button onClick={clearFilters}>Clear</Button>
-            </Space>
-          </Col>
-        </Row> */}
         <Row>
+        {loading ? (
+          <Spin size="large"  style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)" }} />
+        ) : (
           <Col span={24}>
-            <Table columns={columns} dataSource={filteredData} size="large" />
+          <Table columns={columns} dataSource={filteredData} size="large"/>
           </Col>
-        </Row>
+        )}
+      </Row>
       </div>
     </>
   );
