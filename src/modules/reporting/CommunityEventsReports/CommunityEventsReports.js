@@ -48,43 +48,51 @@ const CommunityEventsReports = () => {
   const filterEvents = async () => {
     try {
       console.log("Selected Dates:", selectedDates);
-      let startDate = moment(selectedDates[0]?.$d).format("YYYY-MM-DD HH:mm:ss");
-      let endDate = moment(selectedDates[1]?.$d).format("YYYY-MM-DD HH:mm:ss");      
+      let startDate = moment(selectedDates[0]?.$d).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      let endDate = moment(selectedDates[1]?.$d).format("YYYY-MM-DD HH:mm:ss");
       console.log(startDate, endDate);
       const response = await axios.get(
-        `https://communityactivity-2e7ac5425e81.herokuapp.com/communityactivityeventreport?startDt=${(
-          startDate
-        )}&endDt=${(endDate)}`
+        `https://communityactivity-2e7ac5425e81.herokuapp.com/communityactivityeventreport?startDt=${startDate}&endDt=${endDate}`
       );
-      setData(response.data.communityActivityReportData);
+      setData(
+        response.data.communityActivityReportData.map((item, index) => ({
+          ...item,
+          key: index,
+        }))
+      );
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     }
   };
 
+  const resetEvents = () => {
+    fetchData();
+    setSelectedDates([]);  };
+
   const handleDateChange = (dates) => {
     setSelectedDates(dates);
   };
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        "https://communityactivity-2e7ac5425e81.herokuapp.com/communityactivityeventreport"
+      );
+      setData(
+        response.data.communityActivityReportData.map((item, index) => ({
+          ...item,
+          key: index,
+        }))
+      );
+      // setData(response.data.communityActivityReportData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "https://communityactivity-2e7ac5425e81.herokuapp.com/communityactivityeventreport"
-        );
-        setData(
-          response.data.communityActivityReportData.map((item, index) => ({
-            ...item,
-            key: index,
-          }))
-        );
-        // setData(response.data.communityActivityReportData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -96,11 +104,20 @@ const CommunityEventsReports = () => {
         </Col>
       </Row>
       <div className="datepicker-container">
-        <Space direction="vertical" size={12}>
-          <RangePicker onChange={handleDateChange} />
-        </Space>
-        <Button onClick={filterEvents}>Filter</Button>
-      </div>
+      <Row gutter={24}>
+        <Col span={16}>
+          <RangePicker value={selectedDates} onChange={handleDateChange} />
+        </Col>
+        <Col span={8}>
+          <Space>
+            <Button onClick={filterEvents}>Filter</Button>
+            <Button danger onClick={resetEvents}>
+              Reset
+            </Button>
+          </Space>
+        </Col>
+      </Row>
+    </div>
       <Row>
         {loading ? (
           <Spin

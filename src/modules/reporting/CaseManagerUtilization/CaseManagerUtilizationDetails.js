@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Drawer } from 'antd';
+import { Drawer, Typography } from 'antd';
+
+const { Title } = Typography;
 
 const CaseManagerUtilizationDetails = ({setShowDetails, record}) => {
   const [open, setOpen] = useState(false);
@@ -23,6 +25,7 @@ const CaseManagerUtilizationDetails = ({setShowDetails, record}) => {
     closable={false}
   >
     <p>hello {record.CaseManagerName}</p>
+    <Title level={2}>Patients Data</Title>
   </Drawer>
 </>
 
