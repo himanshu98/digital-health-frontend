@@ -21,8 +21,10 @@ import {
   Col,
   Typography,
   Select,
-  Table
+  Table,
 } from "antd";
+import { CSVLink } from "react-csv";
+import { ExportOutlined } from "@ant-design/icons";
 import "./Demographics.css";
 
 // register chart.js
@@ -398,11 +400,28 @@ const Demographics = () => {
       key: key,
     }));
 
-    return <Table columns={columns} dataSource={dataSource} pagination={{
-      position: ['none', 'none'],
-    }} />;
+    return (
+      <>
+        <CSVLink
+          data={dataSource}
+          onClick={() => {
+            console.log("clicked");
+          }}
+        >
+          <Button style={{marginLeft: '10px'}} icon={<ExportOutlined />}>
+            Export
+          </Button>
+        </CSVLink>
+        <Table
+          columns={columns}
+          dataSource={dataSource}
+          pagination={{
+            position: ["none", "none"],
+          }}
+        />
+      </>
+    );
   };
-
 
   const renderRaceChartByType = () => {
     const raceTableData = raceLabels.map((race) => ({
@@ -416,8 +435,8 @@ const Demographics = () => {
         return <Pie data={raceData} options={options} />;
       case "doughnut":
         return <Doughnut data={raceData} options={options} />;
-        case "table":
-          return renderTable(raceTableData, ["race", "count"]);
+      case "table":
+        return renderTable(raceTableData, ["race", "count"]);
       default:
         return null;
     }
@@ -455,7 +474,7 @@ const Demographics = () => {
       case "doughnut":
         return <Doughnut data={ageBandBarData} options={options} />;
       case "table":
-        return renderTable(ageBandTableData, ["ageBand", "count"]); 
+        return renderTable(ageBandTableData, ["ageBand", "count"]);
       default:
         return null;
     }
@@ -493,7 +512,7 @@ const Demographics = () => {
       case "doughnut":
         return <Doughnut data={sexBarData} options={options} />;
       case "table":
-        return renderTable(sexTableData, ["sex", "count"]); 
+        return renderTable(sexTableData, ["sex", "count"]);
       default:
         return null;
     }
@@ -519,10 +538,12 @@ const Demographics = () => {
   );
 
   const renderDisabilityChartByType = () => {
-    const disabilityTableData = Object.entries(countByDisability).map(([status, count]) => ({
-      status,
-      count,
-    }));
+    const disabilityTableData = Object.entries(countByDisability).map(
+      ([status, count]) => ({
+        status,
+        count,
+      })
+    );
     switch (chartTypeDisability) {
       case "bar":
         return <Bar data={disabilityBarData} options={options} />;
@@ -531,7 +552,7 @@ const Demographics = () => {
       case "doughnut":
         return <Doughnut data={disabilityBarData} options={options} />;
       case "table":
-        return renderTable(disabilityTableData, ["status", "count"]); 
+        return renderTable(disabilityTableData, ["status", "count"]);
       default:
         return null;
     }

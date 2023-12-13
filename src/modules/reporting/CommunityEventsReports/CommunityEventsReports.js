@@ -9,6 +9,8 @@ import {
   Space,
   DatePicker,
 } from "antd";
+import { CSVLink } from "react-csv";
+import { ExportOutlined } from "@ant-design/icons";
 import axios from "axios";
 import moment from "moment";
 
@@ -69,7 +71,8 @@ const CommunityEventsReports = () => {
 
   const resetEvents = () => {
     fetchData();
-    setSelectedDates([]);  };
+    setSelectedDates([]);
+  };
 
   const handleDateChange = (dates) => {
     setSelectedDates(dates);
@@ -104,20 +107,33 @@ const CommunityEventsReports = () => {
         </Col>
       </Row>
       <div className="datepicker-container">
-      <Row gutter={24}>
-        <Col span={16}>
-          <RangePicker value={selectedDates} onChange={handleDateChange} />
-        </Col>
-        <Col span={8}>
-          <Space>
-            <Button onClick={filterEvents}>Filter</Button>
-            <Button danger onClick={resetEvents}>
-              Reset
-            </Button>
-          </Space>
-        </Col>
-      </Row>
-    </div>
+        <Row gutter={24}>
+          <Col span={16}>
+            <RangePicker value={selectedDates} onChange={handleDateChange} />
+          </Col>
+          <Col span={8}>
+            <Space>
+              <Button onClick={filterEvents}>Filter</Button>
+              <Button danger onClick={resetEvents}>
+                Reset
+              </Button>
+              <CSVLink
+                data={data}
+                onClick={() => {
+                  console.log("clicked");
+                }}
+              >
+                <Button
+                  style={{ marginLeft: "10px" }}
+                  icon={<ExportOutlined />}
+                >
+                  Export
+                </Button>
+              </CSVLink>
+            </Space>
+          </Col>
+        </Row>
+      </div>
       <Row>
         {loading ? (
           <Spin
