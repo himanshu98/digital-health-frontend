@@ -391,46 +391,24 @@ const Demographics = () => {
     </div>
   );
 
-  // Table
-  const columns = [
-    // Define your columns here
-    // Example:
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
-    },
-    // Add more columns as needed
-  ];
-  
-  const dataSource = [
-    // Your data goes here
-    // Example:
-    {
-      key: "1",
-      name: "John Doe",
-      age: 30,
-    },
-    {
-      key: "2",
-      name: "Jane Doe",
-      age: 25,
-    },
-    // Add more data as needed
-  ];
-  const renderTable = () => {
+  const renderTable = (dataSource, customColumns) => {
+    const columns = customColumns.map((key) => ({
+      title: key.charAt(0).toUpperCase() + key.slice(1),
+      dataIndex: key,
+      key: key,
+    }));
+
     return <Table columns={columns} dataSource={dataSource} pagination={{
       position: ['none', 'none'],
-    }}/>;
+    }} />;
   };
 
 
   const renderRaceChartByType = () => {
+    const raceTableData = raceLabels.map((race) => ({
+      race,
+      count: countByRace[race],
+    }));
     switch (chartTypeRace) {
       case "bar":
         return <Bar data={raceData} options={options} />;
@@ -438,8 +416,8 @@ const Demographics = () => {
         return <Pie data={raceData} options={options} />;
       case "doughnut":
         return <Doughnut data={raceData} options={options} />;
-      case "table":
-        return renderTable(); 
+        case "table":
+          return renderTable(raceTableData, ["race", "count"]);
       default:
         return null;
     }
@@ -465,6 +443,10 @@ const Demographics = () => {
   );
 
   const renderAgeBandChartByType = () => {
+    const ageBandTableData = ageBandData.labels.map((label, index) => ({
+      ageBand: label,
+      count: ageBandData.dataValues[index],
+    }));
     switch (chartTypeAgeBand) {
       case "bar":
         return <Bar data={ageBandBarData} options={options} />;
@@ -473,7 +455,7 @@ const Demographics = () => {
       case "doughnut":
         return <Doughnut data={ageBandBarData} options={options} />;
       case "table":
-        return renderTable(); 
+        return renderTable(ageBandTableData, ["ageBand", "count"]); 
       default:
         return null;
     }
@@ -499,6 +481,10 @@ const Demographics = () => {
   );
 
   const renderSexChartByType = () => {
+    const sexTableData = Object.entries(countBySex).map(([sex, count]) => ({
+      sex,
+      count,
+    }));
     switch (chartTypeSex) {
       case "bar":
         return <Bar data={sexBarData} options={options} />;
@@ -507,7 +493,7 @@ const Demographics = () => {
       case "doughnut":
         return <Doughnut data={sexBarData} options={options} />;
       case "table":
-        return renderTable(); 
+        return renderTable(sexTableData, ["sex", "count"]); 
       default:
         return null;
     }
@@ -533,6 +519,10 @@ const Demographics = () => {
   );
 
   const renderDisabilityChartByType = () => {
+    const disabilityTableData = Object.entries(countByDisability).map(([status, count]) => ({
+      status,
+      count,
+    }));
     switch (chartTypeDisability) {
       case "bar":
         return <Bar data={disabilityBarData} options={options} />;
@@ -541,7 +531,7 @@ const Demographics = () => {
       case "doughnut":
         return <Doughnut data={disabilityBarData} options={options} />;
       case "table":
-        return renderTable(); 
+        return renderTable(disabilityTableData, ["status", "count"]); 
       default:
         return null;
     }
