@@ -15,13 +15,12 @@ import moment from "moment";
 import { Table } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { message } from "antd";
-// import { DatePicker } from "antd";
 const { Panel } = Collapse;
 
 const { TextArea } = Input;
 const { Content } = Layout;
 
-const ServicesPage = (props) => {
+const ServicesPage = () => {
   const [form] = Form.useForm();
   const [appointments, setAppointments] = useState([]);
   const [servicesList, setservicesList] = useState([]);
@@ -244,7 +243,7 @@ const ServicesPage = (props) => {
         serviceProvider: editingAppointment.serviceProvider,
       };
       const appointmentId = editingAppointment.id;
-
+console.log(updatedAppointmentForApi)
       await axios.put(
         `https://team3-598fa58116f6.herokuapp.com/api/bookings/edit/${appointmentId}`,
         updatedAppointmentForApi
@@ -451,7 +450,8 @@ const ServicesPage = (props) => {
         `https://team3-598fa58116f6.herokuapp.com/api/progress-notes/booking/${appointmentId}`
       );
       if (response?.data?.length > 0) {
-        const noteData = response.data[0];
+        const noteData = response.data[response?.data?.length-1];
+        console.log(noteData)
         setProgressNoteData({
           appointmentId: appointmentId,
           question1: noteData.overallSessionQuality || 0,
@@ -609,11 +609,11 @@ const ServicesPage = (props) => {
         key: "date",
         render: (date) => moment(date).format("YYYY-MM-DD"),
       },
-      {
-        title: "Service Provider",
-        dataIndex: "serviceProvider",
-        key: "serviceProvider",
-      },
+      // {
+      //   title: "Service Provider",
+      //   dataIndex: "serviceProvider",
+      //   key: "serviceProvider",
+      // },
       {
         title: "Location",
         dataIndex: "location",
@@ -735,8 +735,9 @@ const ServicesPage = (props) => {
               <Select.Option value="New Jersey">New Jersey</Select.Option>
             </Select>
           </Form.Item>
-          <Form.Item label="Service Provider">
+          {/* <Form.Item label="Service Provider" >
             <Select
+            disabled
               placeholder="Select Service Provider"
               value={editingAppointment?.serviceProvider}
               onChange={(value) =>
@@ -752,7 +753,7 @@ const ServicesPage = (props) => {
                 </Select.Option>
               ))}
             </Select>
-          </Form.Item>
+          </Form.Item> */}
         </Form>
       </Modal>
     );
@@ -818,8 +819,9 @@ const ServicesPage = (props) => {
                 <Select.Option value="New Jersey">New Jersey</Select.Option>
               </Select>
             </Form.Item>
-            <Form.Item label="Service Provider">
+            {/* <Form.Item label="Service Provider" >
               <Select
+              disabled
                 placeholder="Select Service Provider"
                 value={editingAppointment?.serviceProvider}
                 onChange={(value) =>{
@@ -838,7 +840,7 @@ const ServicesPage = (props) => {
                   </Select.Option>
                 ))}
               </Select>
-            </Form.Item>
+            </Form.Item> */}
           </Form>
         </Modal>
 
