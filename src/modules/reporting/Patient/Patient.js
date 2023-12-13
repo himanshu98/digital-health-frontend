@@ -233,7 +233,7 @@ const data = [
 ];
 
 const Patient = () => {
-  const [filteredData, setFilteredData] = useState(data);
+  const [filteredData] = useState(data);
   // const [nameFilter, setNameFilter] = useState("");
   // const [phoneFilter, setPhoneFilter] = useState("");
   // const [genderFilter, setGenderFilter] = useState("null");

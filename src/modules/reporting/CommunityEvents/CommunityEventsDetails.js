@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Drawer, notification } from 'antd';
+import { Drawer } from 'antd';
 
 const CommunityEventsDetails = ({setShowDetails, record}) => {
   const [open, setOpen] = useState(false);
