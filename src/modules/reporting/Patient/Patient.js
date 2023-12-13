@@ -233,7 +233,7 @@ const data = [
 ];
 
 const Patient = () => {
-  const [filteredData] = useState(data);
+  const [filteredData, setFilteredData] = useState(data);
   const [nameFilter, setNameFilter] = useState("");
   const [phoneFilter, setPhoneFilter] = useState("");
   const [genderFilter, setGenderFilter] = useState("null");
@@ -250,14 +250,14 @@ const Patient = () => {
       return nameMatch && phoneMatch && genderMatch;
     });
 
-    // setFilteredData(filteredResults);
+    setFilteredData(filteredResults);
   };
 
   const clearFilters = () => {
     setNameFilter("");
     setPhoneFilter("");
     setGenderFilter("null");
-    // setFilteredData(data);
+    setFilteredData(data);
   };
   return (
     <>
