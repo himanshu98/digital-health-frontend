@@ -134,7 +134,7 @@ const CommunityEvents = () => {
     {
       title: "Community Activity Name",
       dataIndex: "communityActivityName",
-      width: "25%",
+      width: "15%",
       editable: true,
       render: (_, record) => {
         return (
@@ -158,37 +158,31 @@ const CommunityEvents = () => {
     {
       title: "Hours",
       dataIndex: "hours",
-      width: "15%",
+      width: "5%",
       editable: true,
     },
     {
       title: "Objectives",
       dataIndex: "objectives",
-      width: "40%",
+      width: "20%",
       editable: true,
     },
     {
       title: "Outcomes",
       dataIndex: "outcomes",
-      width: "40%",
-      editable: true,
-    },
-    {
-      title: "Issue Area ID",
-      dataIndex: "issueAreaID",
-      width: "40%",
+      width: "20%",
       editable: true,
     },
     {
       title: "Issue Area Name",
       dataIndex: "issueAreaName",
-      width: "40%",
+      width: "5%",
       editable: true,
     },
     {
       title: "Primary Entities",
       dataIndex: "primaryEntities",
-      width: "40%",
+      width: "10%",
       editable: true,
       render: (_, record) => {
         return record.primaryEntities
@@ -199,7 +193,7 @@ const CommunityEvents = () => {
     {
       title: "Activity Types",
       dataIndex: "activityTypes",
-      width: "40%",
+      width: "10%",
       editable: true,
       render: (_, record) => {
         return record.activityTypes
@@ -210,6 +204,7 @@ const CommunityEvents = () => {
     {
       title: "Operation",
       dataIndex: "operation",
+      width: "10%",
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (

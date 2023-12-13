@@ -6,7 +6,9 @@ import CaseManagersPerformance from './CaseManagersPerformance/CaseManagersPerfo
 import ServiceProvider from './ServiceProvider/ServiceProvider';
 import Demographics from './Demographics/Demographics';
 import CommunityEvents from './CommunityEvents/CommunityEvents';
+import CommunityEventsReports from './CommunityEventsReports/CommunityEventsReports';
 import CaseManagerUtilization from './CaseManagerUtilization/CaseManagerUtilization';
+import FundedServicesAndAchievements from './FundedServicesAndAchievements/FundedServicesAndAchievements'
 
 const ReportingDashboard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -27,7 +29,7 @@ const ReportingDashboard = () => {
 
   return (
     <>
-      <Sidebar onDrawerOpen={handleDrawerOpen} onDrawerClose={handleDrawerClose} />
+      <Sidebar onDrawerOpen={handleDrawerOpen} onDrawerClose={handleDrawerClose}/>
       <div style={mainContentStyle}>
         <Switch>
           <Route path="/reporting/patient" component={Patient} />
@@ -36,6 +38,8 @@ const ReportingDashboard = () => {
           <Route path="/reporting/serviceprovider" component={ServiceProvider} />
           <Route path="/reporting/demographics" component={Demographics} />
           <Route path="/reporting/communityevents" component={CommunityEvents} />
+          <Route path="/reporting/communityeventreports" component={CommunityEventsReports} />
+          <Route path="/reporting/fsap" component={FundedServicesAndAchievements} />
         </Switch>
       </div>
     </>
