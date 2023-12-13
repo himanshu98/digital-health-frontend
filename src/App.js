@@ -5,6 +5,8 @@ import CareManagementDashboard from "./modules/careManagement/CareManagementDash
 import ReportingDashboard from "./modules/reporting/ReportingDashboard";
 import { ConfigProvider, theme } from "antd";
 import CaseManagerSelectionPage from "./modules/careManagement/CaseManagerSelectionPage";
+import serviceProgressNotes from './modules/serviceProgressNotes/serviceProgressNotes';
+
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
               path="/careManagement"
               component={CareManagementDashboard}
             />
+                        <Route  path="/services" component={serviceProgressNotes} />
             <Route
               path="/reporting"
               render={(props) => <ReportingDashboard {...props} />}
