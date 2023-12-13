@@ -1,91 +1,75 @@
-import React, { useState } from 'react';
-import { Row, Col, Typography, Select, Button } from 'antd';
-import { Bar } from 'react-chartjs-2';
+import React, { useState, useEffect } from "react";
+import { Table, Typography, Spin, Row, Col } from "antd";
+import axios from "axios";
 
 const { Title } = Typography;
-const { Option } = Select;
 
 const CaseManagerPerformance = () => {
-  const chartData1 = {
-    labels: ['Category 1', 'Category 2', 'Category 3', 'Category 4', 'Category 5'],
-    datasets: [
-      {
-        label: 'Performance 1',
-        backgroundColor: 'rgba(75,192,192,0.2)',
-        borderColor: 'rgba(75,192,192,1)',
-        borderWidth: 1,
-        hoverBackgroundColor: 'rgba(75,192,192,0.4)',
-        hoverBorderColor: 'rgba(75,192,192,1)',
-        data: [65, 59, 80, 81, 56],
-      },
-    ],
-  };
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
 
-  const chartData2 = {
-    labels: ['Category A', 'Category B', 'Category C', 'Category D', 'Category E'],
-    datasets: [
-      {
-        label: 'Performance 2',
-        backgroundColor: 'rgba(255,99,132,0.2)',
-        borderColor: 'rgba(255,99,132,1)',
-        borderWidth: 1,
-        hoverBackgroundColor: 'rgba(255,99,132,0.4)',
-        hoverBorderColor: 'rgba(255,99,132,1)',
-        data: [45, 72, 68, 34, 80],
-      },
-    ],
-  };
+  const columns = [
+    {
+      title: "Case Manager Name",
+      dataIndex: "CaseManagerName",
+      key: "CaseManagerName",
+    },
+    {
+      title: "Department",
+      dataIndex: "Department",
+      key: "Department",
+    },
+    {
+      title: "Contact Number",
+      dataIndex: "ContactNumber",
+      key: "ContactNumber",
+    },
+    {
+      title: "Cases Assigned",
+      dataIndex: "casesAssigned",
+      key: "casesAssigned",
+    },
+  ];
 
-  const [selectedCaseManager, setSelectedCaseManager] = useState('');
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://sdpm-reports-138bfe3f755c.herokuapp.com/casemanagerperformancereport"
+        );
+        setData(response.data.caseManagers); // Assuming the API response is an object with a 'caseManagers' property
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleCaseManagerChange = (value) => {
-    setSelectedCaseManager(value);
-  };
-
-  const handleSearch = () => {
-    console.log(`Searching for ${selectedCaseManager}`);
-  };
-
-  const handleReset = () => {
-    setSelectedCaseManager('');
-  };
+    fetchData();
+  }, []);
 
   return (
-    <div style={{ padding: '20px' }}>
+    <>
+      <div className="patient" style={{ padding: "20px" }}>
       <Row>
         <Col span={24}>
           <Title level={2}>Case Manager Performance</Title>
         </Col>
       </Row>
-      <Row gutter={16} style={{ marginBottom: '20px' }}>
-        <Col span={8}>
-          <Select
-            placeholder="Select Case Manager"
-            style={{ width: '100%' }}
-            onChange={handleCaseManagerChange}
-            value={selectedCaseManager}
-          >
-            <Option value="CaseManager1">Case Manager 1</Option>
-            <Option value="CaseManager2">Case Manager 2</Option>
-            <Option value="CaseManager3">Case Manager 3</Option>
-          </Select>
-        </Col>
-        <Col span={8}>
-          <Button type="primary" onClick={handleSearch} style={{ marginRight: '10px' }}>
-            Search
-          </Button>
-          <Button onClick={handleReset}>Reset</Button>
+      <Row>
+        <Col span={24}>
+          {loading ? (
+            <Spin
+              size="large"
+              style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
+            />
+          ) : (
+            <Table columns={columns} dataSource={data} tableLayout="fixed" />
+          )}
         </Col>
       </Row>
-      <Row gutter={16}>
-        <Col span={12}>
-          <Bar data={chartData1} />
-        </Col>
-        <Col span={12}>
-          <Bar data={chartData2} />
-        </Col>
-      </Row>
-    </div>
+      </div>
+    </>
   );
 };
 
