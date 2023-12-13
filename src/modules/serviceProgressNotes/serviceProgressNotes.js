@@ -15,6 +15,7 @@ import moment from "moment";
 import { Table } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { message } from "antd";
+import { DatePicker } from "antd";
 
 const { Panel } = Collapse;
 
@@ -35,7 +36,7 @@ const ServicesPage = (props) => {
     id: "",
     date: "",
     serviceName: "",
-    serviceID: "", // Add this line
+    serviceID: "", 
     patientName: "",
     location: "",
     serviceProvider: "",
@@ -59,20 +60,20 @@ const ServicesPage = (props) => {
       try {
         const serviceRequests = [
           {
-            patientID: "1",
-            patientName: "John Doe",
+            patientID: "4",
+            patientName: "John Smith",
             vendorId: "1",
             goals: [],
           },
           {
-            patientID: "2",
-            patientName: "Jane Smith",
+            patientID: "6",
+            patientName: "ZZFIRST ZZLAST",
             vendorId: "2",
             goals: [],
           },
           {
-            patientID: "3",
-            patientName: "Alice Johnson",
+            patientID: "7",
+            patientName: "ZZFIRST ZZLAST",
             vendorId: "1",
             goals: [
               {
@@ -96,8 +97,8 @@ const ServicesPage = (props) => {
             ],
           },
           {
-            patientID: "4",
-            patientName: "Bob Brown",
+            patientID: "10",
+            patientName: "Sam Smith",
             vendorId: "2",
             goals: [
               {
@@ -115,8 +116,8 @@ const ServicesPage = (props) => {
             ],
           },
           {
-            patientID: "5",
-            patientName: "Emma Davis",
+            patientID: "1",
+            patientName: "John Smith",
             vendorId: "1",
             goals: [
               {
@@ -168,14 +169,22 @@ const ServicesPage = (props) => {
         );
         setservicesList(servicesResponse.data);
 
-        const dummyPatientData = [
-          { id: "1", name: "John Doe" },
-          { id: "2", name: "Jane Smith" },
-          { id: "3", name: "Alice Johnson" },
-          { id: "4", name: "Bob Brown" },
-          { id: "5", name: "Emma Davis" },
-        ];
-        setPatientOptions(dummyPatientData);
+        const patientResponse = await axios.get(
+          "https://patient-intake-api-8ce23f3e5c62.herokuapp.com/"
+        );
+        const transformedPatientData = patientResponse.data.patients.map(
+          (patient) => {
+            // Combine first and last names
+            let fullName = `${patient.first_name} ${patient.last_name}`;
+
+            // Return the transformed object
+            return {
+              id: patient.id.toString(),
+              name: fullName,
+            };
+          }
+        );
+        setPatientOptions(transformedPatientData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -199,35 +208,39 @@ const ServicesPage = (props) => {
   }, []);
 
   const handleEditClick = (appointment) => {
-    setEditingAppointment({ ...appointment });
+    const serviceName = servicesList.find(
+      (service) => service.id === appointment.serviceID
+    )?.serviceName;
+
+    setEditingAppointment({
+      ...appointment,
+      service: serviceName || "",
+    });
+
     fetchServiceProviders(appointment.serviceID);
     setIsEditModalVisible(true);
   };
+
   const handleEditSave = async () => {
+    // Check if the date is set
+    if (!editingAppointment.date) {
+      message.error("Please select a date!");
+      return;
+    }
+
     try {
       const dateTimeForApi = editingAppointment.date + "T21:00:00";
-
       const updatedAppointmentForApi = {
         ...editingAppointment,
         endTime: dateTimeForApi,
         serviceId: editingAppointment.serviceID,
       };
-
       const appointmentId = editingAppointment.id;
 
-      axios
-        .put(
-          `https://team3-598fa58116f6.herokuapp.com/api/bookings/edit/${appointmentId}`,
-          updatedAppointmentForApi
-        )
-        .then((response) => {
-          // ...existing logic...
-          message.success("Appointment updated successfully.");
-        })
-        .catch((error) => {
-          console.error("Error updating appointment:", error);
-          message.error("Failed to update appointment.");
-        });
+      await axios.put(
+        `https://team3-598fa58116f6.herokuapp.com/api/bookings/edit/${appointmentId}`,
+        updatedAppointmentForApi
+      );
 
       const updatedAppointments = appointments.map((appointment) =>
         appointment.id === editingAppointment.id
@@ -237,13 +250,13 @@ const ServicesPage = (props) => {
             }
           : appointment
       );
-      setAppointments(updatedAppointments);
 
-      setTimeout(() => {
-        setIsEditModalVisible(false);
-      }, 500);
+      setAppointments(updatedAppointments);
+      message.success("Appointment updated successfully.");
+      setIsEditModalVisible(false);
     } catch (error) {
       console.error("Error updating appointment:", error);
+      message.error("Failed to update appointment.");
     }
   };
 
@@ -265,12 +278,12 @@ const ServicesPage = (props) => {
   };
 
   const fetchServiceProviders = async (serviceId) => {
-    console.log(serviceId);
     try {
       const response = await axios.get(
-        `https://team3-598fa58116f6.herokuapp.com/api/service-employees/skill/${serviceId}`
+        `https://team3-598fa58116f6.herokuapp.com/api/service-employees/skill/2`
       );
       setServiceProviders(response.data);
+      console.log(response.data);
     } catch (error) {
       console.error("Error fetching service providers:", error);
       setServiceProviders([]);
@@ -340,7 +353,6 @@ const ServicesPage = (props) => {
       .then((response) => {
         message.success("Progress note saved successfully.");
 
-        console.log(response.data);
         setIsProgressNoteModalVisible(false);
       })
       .catch((error) => {
@@ -479,9 +491,10 @@ const ServicesPage = (props) => {
   const handleAppointmentSave = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
         const newAppointmentRequest = {
           employeeId: appointmentData.employeeId,
+          employeeName: appointmentData.serviceProvider,
           endTime: appointmentData.date + "T21:00:00",
           patientId: parseInt(appointmentData.patientId, 10),
           remarks: appointmentData.remarks || "No remarks",
@@ -490,23 +503,26 @@ const ServicesPage = (props) => {
           status: appointmentData.status || "Scheduled",
         };
 
-        axios
-          .post(
+        try {
+          const response = await axios.post(
             "https://team3-598fa58116f6.herokuapp.com/api/bookings/add",
             newAppointmentRequest
-          )
-          .then((response) => {
-            message.success("Appointment saved successfully.");
+          );
 
-            // Handle response
-            // ... rest of your logic ...
-          })
-          .catch((error) => {
-            console.error("Error saving appointment:", error);
-            message.error("Failed to save appointment.");
-          });
+          if (response.data) {
+            // Assuming the response data is the new appointment
+            const newAppointment = transformBookingDetail(response.data);
+            setAppointments([...appointments, newAppointment]);
+          } else {
+            console.error("No data returned from the post request");
+          }
 
-        setIsModalVisible(false);
+          message.success("Appointment saved successfully.");
+          setIsModalVisible(false);
+        } catch (error) {
+          console.error("Error saving appointment:", error);
+          message.error("Failed to save appointment.");
+        }
       })
       .catch((info) => {
         console.error("Validate Failed:", info);
@@ -689,7 +705,6 @@ const ServicesPage = (props) => {
 
   const renderEditModal = () => {
     if (!editingAppointment) return null;
-
     return (
       <Modal
         title="Edit Appointment"
@@ -704,22 +719,17 @@ const ServicesPage = (props) => {
           <Form.Item label="Patient Id">
             <Input value={editingAppointment?.patientId} disabled />
           </Form.Item>
-          <Form.Item
-            label="Date of Appointment"
-            name="date"
-            rules={[{ required: true, message: "Please select a date!" }]}
-          >
-            <input
-              type="date"
-              defaultValue={editingAppointment?.date}
-              onChange={(e) =>
-                setEditingAppointment({
-                  ...editingAppointment,
-                  date: e.target.value,
-                })
-              }
-            />
-          </Form.Item>
+          <input
+            type="date"
+            value={editingAppointment.date}
+            onChange={(e) =>
+              setEditingAppointment({
+                ...editingAppointment,
+                date: e.target.value,
+              })
+            }
+          />
+
           <Form.Item label="Location">
             <Select
               value="New Jersey"
@@ -731,6 +741,7 @@ const ServicesPage = (props) => {
           </Form.Item>
           <Form.Item label="Service Provider">
             <Select
+              placeholder="Select Service Provider"
               value={editingAppointment?.serviceProvider}
               onChange={(value) =>
                 setEditingAppointment({
@@ -740,8 +751,8 @@ const ServicesPage = (props) => {
               }
             >
               {serviceProviders.map((provider) => (
-                <Select.Option key={provider.id} value={provider.name}>
-                  {provider.name}
+                <Select.Option key={provider.id} value={provider.employeeName}>
+                  {provider.employeeName}
                 </Select.Option>
               ))}
             </Select>
@@ -813,6 +824,7 @@ const ServicesPage = (props) => {
             </Form.Item>
             <Form.Item label="Service Provider">
               <Select
+                placeholder="Select Service Provider"
                 value={appointmentData.serviceProvider}
                 onChange={(value) =>
                   setAppointmentData({
@@ -822,8 +834,11 @@ const ServicesPage = (props) => {
                 }
               >
                 {serviceProviders.map((provider) => (
-                  <Select.Option key={provider.id} value={provider.name}>
-                    {provider.name}
+                  <Select.Option
+                    key={provider.id}
+                    value={provider.employeeName}
+                  >
+                    {provider.employeeName}
                   </Select.Option>
                 ))}
               </Select>
