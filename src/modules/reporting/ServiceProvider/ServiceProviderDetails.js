@@ -89,39 +89,20 @@ const HistoryTabContent = ({ record }) => {
   );
 };
 const RatingsTabContent = ({ record }) => {
-  const columns = [
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-    },
-    {
-      title: "Remarks",
-      dataIndex: "remarks",
-      key: "remarks",
-    },
-  ];
-
-  const data = [];
-
   // Content for History Tab
   return (
     <>
-<Row gutter={[0, 24]}>
-      <Col span={6} style={{ display: "flex", alignItems: "center" }}>
-        <Title level={2}>Rating</Title>
-      </Col>
-      <Col span={18}>
-        <Rate disabled defaultValue={3} style={{marginTop: '30px'}}/>
-      </Col>
-    </Row>
-      <Row>
-        <Table
-          columns={columns}
-          dataSource={data}
-          size="small"
-          pagination={false}
-        />
+      <Row gutter={[0, 24]}>
+        <Col span={6} style={{ display: "flex", alignItems: "center" }}>
+          <Title level={2}>Rating</Title>
+        </Col>
+        <Col span={18}>
+          <Rate
+            disabled
+            defaultValue={Math.floor(record.rating)}
+            style={{ marginTop: "30px" }}
+          />
+        </Col>
       </Row>
     </>
   );
