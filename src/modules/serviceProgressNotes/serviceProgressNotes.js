@@ -73,14 +73,14 @@ const ServicesPage = () => {
             goals: [],
           },
           {
-            patientID: "6",
-            patientName: "ZZFIRST ZZLAST",
+            patientID: "999445621",
+            patientName: "Dave Johnson",
             vendorId: "2",
             goals: [],
           },
           {
-            patientID: "7",
-            patientName: "ZZFIRST ZZLAST",
+            patientID: "154777777",
+            patientName: "John Doe",
             vendorId: "1",
             goals: [
               {
@@ -104,8 +104,8 @@ const ServicesPage = () => {
             ],
           },
           {
-            patientID: "10",
-            patientName: "Sam Smith",
+            patientID: "245748888",
+            patientName: "Sarah Smith",
             vendorId: "2",
             goals: [
               {
@@ -123,8 +123,8 @@ const ServicesPage = () => {
             ],
           },
           {
-            patientID: "1",
-            patientName: "John Smith",
+            patientID: "777777777",
+            patientName: "Bobby Tompkins",
             vendorId: "1",
             goals: [
               {
@@ -171,27 +171,33 @@ const ServicesPage = () => {
 
     const fetchServicesAndPatientsData = async () => {
       try {
+
+        
+        const patientResponse = await axios.get(
+          "https://patient-intake-api-8ce23f3e5c62.herokuapp.com/"
+        );
+        console.log(patientResponse)
+        const transformedPatientData = patientResponse.data.patients.map(
+          (patient) => {
+            // Combine first and last names
+            let fullName = `${patient.first_name} ${patient.last_name}`;
+            console.log(fullName)
+            // Return the transformed object
+            return {
+              id: patient.ssn,
+              name: fullName,
+            };
+          }
+        );
+        console.log(transformedPatientData)
+        setPatientOptions(transformedPatientData);
+
         const servicesResponse = await axios.get(
           "https://team3-598fa58116f6.herokuapp.com/api/servicesOffered"
         );
         setservicesList(servicesResponse.data);
 
-        const patientResponse = await axios.get(
-          "https://patient-intake-api-8ce23f3e5c62.herokuapp.com/"
-        );
-        const transformedPatientData = patientResponse.data.patients.map(
-          (patient) => {
-            // Combine first and last names
-            let fullName = `${patient.first_name} ${patient.last_name}`;
-
-            // Return the transformed object
-            return {
-              id: patient.id.toString(),
-              name: fullName,
-            };
-          }
-        );
-        setPatientOptions(transformedPatientData);
+        
       } catch (error) {
         console.error("Error fetching data:", error);
       }
