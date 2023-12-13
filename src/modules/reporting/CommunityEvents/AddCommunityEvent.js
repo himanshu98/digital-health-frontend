@@ -1,22 +1,100 @@
 import React, { useState, useEffect } from "react";
 import { Drawer, Form, Input, Select, Checkbox, Row, Col, Button } from "antd";
+import axios from "axios";
 
-const AddCommunityEvent = ({ addEvent, setVisibility }) => {
+const { TextArea } = Input; // Import TextArea from Ant Design
+
+const AddCommunityEvent = ({ addEvent, setVisibility, onEventAdded }) => {
   const [open, setOpen] = useState(false);
+  const [activityTypes, setActivityTypes] = useState([]);
+  const [issueAreas, setIssueAreas] = useState([]);
+  const [primaryEntities, setPrimaryEntities] = useState([]);
+  const [form] = Form.useForm();
+  const [submittable, setSubmittable] = useState(false);
+  const values = Form.useWatch([], form);
   const onClose = () => {
+    form.resetFields(); // Reset form fields
     setOpen(false);
     setVisibility(false);
   };
-
   useEffect(() => {
     if (addEvent) {
       setOpen(true);
     }
-  }, [addEvent, setVisibility]);
-
-  const addCommunityEvent = () => {
-    console.log("Add clicked");
-  }
+    const fetchActivityTypes = async () => {
+      try {
+        const response = await axios.get(
+          "https://communityactivity-2e7ac5425e81.herokuapp.com/activitytypes"
+        );
+        setActivityTypes(response.data.activityTypes);
+      } catch (error) {
+        console.error("Error fetching activity types:", error);
+      }
+    };
+    const fetchIssueAreas = async () => {
+      try {
+        const response = await axios.get(
+          "https://communityactivity-2e7ac5425e81.herokuapp.com/issueareas"
+        );
+        setIssueAreas(response.data.issueAreas);
+      } catch (error) {
+        console.error("Error fetching issue areas:", error);
+      }
+    };
+    const fetchPrimaryEntities = async () => {
+      try {
+        const response = await axios.get(
+          "https://communityactivity-2e7ac5425e81.herokuapp.com/primaryentities"
+        );
+        setPrimaryEntities(response.data.primaryEntities);
+      } catch (error) {
+        console.error("Error fetching issue areas:", error);
+      }
+    };
+    fetchActivityTypes();
+    fetchIssueAreas();
+    fetchPrimaryEntities();
+    // Make sure to validate fields after fetching data
+    form.validateFields(
+      {validateOnly: true}
+    )
+      .then(() => {
+        setSubmittable(true);
+      })
+      .catch(() => {
+        setSubmittable(false);
+      });
+  }, [addEvent, form, setVisibility, values]);
+  const addCommunityEvent = async () => {
+    try {
+      await form.validateFields();
+      const formData = form.getFieldsValue();
+      // Convert selected values to integers
+      const issueAreaID = parseInt(formData.issueArea, 10);
+      const activityTypes = formData.activityTypes.map((type) => parseInt(type, 10));
+      const primaryEntities = formData.primaryEntities.map((entity) => parseInt(entity, 10));
+      const apiPayload = {
+        communityEventName: formData.eventName,
+        issueAreaID: issueAreaID,
+        hours: formData.hours,
+        objectives: formData.objectives,
+        outcomes: formData.outcomes,
+        activityType: activityTypes,
+        primaryEntities: primaryEntities,
+      };
+      const response = await axios.post(
+        "https://communityactivity-2e7ac5425e81.herokuapp.com/communityactivity",
+        apiPayload
+      );
+      console.log("Community Event added successfully:", response.data);
+      onClose();
+      if (onEventAdded) {
+        onEventAdded();
+      }
+    } catch (error) {
+      console.error("Error adding community event:", error);
+    }
+  };
   return (
     <Drawer
       title="Add a Community Event"
@@ -26,7 +104,7 @@ const AddCommunityEvent = ({ addEvent, setVisibility }) => {
       size="large"
       closable={false}
     >
-      <Form layout="vertical">
+      <Form form={form} layout="vertical">
         <Row gutter={[16, 16]}>
           <Col span={24}>
             <Form.Item
@@ -34,7 +112,7 @@ const AddCommunityEvent = ({ addEvent, setVisibility }) => {
               name="eventName"
               rules={[{ required: true }]}
             >
-              <Input />
+              <Input/>
             </Form.Item>
           </Col>
         </Row>
@@ -42,105 +120,79 @@ const AddCommunityEvent = ({ addEvent, setVisibility }) => {
           <Col span={12}>
             <Form.Item
               label="Choose Issue Area"
-              name="dropdown"
+              name="issueArea"
               rules={[{ required: true }]}
             >
               <Select>
-                <Select.Option value="Access to Social/Recreational Opportunities">
-                  Access to Social/Recreational Opportunities
-                </Select.Option>
-                <Select.Option value="Vocational/Employment">
-                  Vocational/Employment
-                </Select.Option>
-                <Select.Option value="Healthcare">Healthcare</Select.Option>
-                <Select.Option value="Transportation">
-                  Transportation
-                </Select.Option>
-                <Select.Option value="Housing">Housing</Select.Option>
-                <Select.Option value="Assistive Technology">
-                  Assistive Technology
-                </Select.Option>
-                <Select.Option value="Youth Transitioning">
-                  Youth Transitioning
-                </Select.Option>
-                <Select.Option value="Education">Education</Select.Option>
-                <Select.Option value="Emergency Management">
-                  Emergency Management
-                </Select.Option>
-                <Select.Option value="ADA Compliance">
-                  ADA Compliance
-                </Select.Option>
-                <Select.Option value="Outreach Related Needs">
-                  Outreach Related Needs
-                </Select.Option>
-                <Select.Option value="Staff Training">
-                  Staff Training
-                </Select.Option>
-                <Select.Option value="Increasing Access to Community Programs">
-                  Increasing Access to Community Programs
-                </Select.Option>
+                {issueAreas.map((area) => (
+                  <Select.Option
+                    key={area.issueAreaID}
+                    value={area.issueAreaID}
+                  >
+                    {area.issueAreaName}
+                  </Select.Option>
+                ))}
               </Select>
             </Form.Item>
           </Col>
           <Col span={24}>
-            <Form.Item label="Activity Types" name="activityTypes">
+            <Form.Item label="Activity Types" name="activityTypes" rules={[{ required: true }]}>
               <Checkbox.Group>
-                <Col span={24}>
-                  <Checkbox value="CollaboratingNetworking">
-                    Collaborating & Networking
-                  </Checkbox>
-                </Col>
-                <Col span={24}>
-                  <Checkbox value="StaffEducationTraining">
-                    Staff Education/Training
-                  </Checkbox>
-                </Col>
-                <Col span={24}>
-                  <Checkbox value="OutreachEfforts">Outreach Efforts</Checkbox>
-                </Col>
-                <Col span={24}>
-                  <Checkbox value="TechicalAssistance">
-                    Techical Assistance
-                  </Checkbox>
-                </Col>
-                <Col span={24}>
-                  <Checkbox value="CommunityEducationPublicInformation">
-                    Community Education & Public Information
-                  </Checkbox>
-                </Col>
-                <Col span={24}>
-                  <Checkbox value="ProfessionalDevelopment">
-                    Professional Development
-                  </Checkbox>
-                </Col>
-                <Col span={24}>
-                  <Checkbox value="CommunitySystemsAdvocacy">
-                    Community & Systems Advocacy
-                  </Checkbox>
-                </Col>
+                {activityTypes.map((type) => (
+                  <Col span={24} key={type.activityTypeID}>
+                    <Checkbox value={type.activityTypeID}>
+                      {type.activityTypeName}
+                    </Checkbox>
+                  </Col>
+                ))}
               </Checkbox.Group>
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={[16, 16]}>
           <Col span={12}>
-            <Form.Item label="Primary Entities" name="primaryEntities">
+            <Form.Item label="Primary Entities" name="primaryEntities" rules={[{ required: true }]}>
               <Checkbox.Group>
-                <Checkbox value="CILs">CILs</Checkbox>
-                <Checkbox value="SILC">SILC</Checkbox>
-                <Checkbox value="DSU">DSU</Checkbox>
+                {primaryEntities.map((entity) => (
+                  <Checkbox
+                    key={entity.primaryEntityID}
+                    value={entity.primaryEntityID}
+                  >
+                    {entity.primaryEntityName}
+                  </Checkbox>
+                ))}
               </Checkbox.Group>
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Enter number of Hours" name="hours">
-              <Input type="number" />
+            <Form.Item label="Enter number of Hours" name="hours" rules={[{ required: true }]}>
+              <Input type="number"/>
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={[16, 16]}>
           <Col span={24}>
-            <Button type="primary" style={{ marginRight: 8 }} onClick={addCommunityEvent}>
+            <Form.Item label="Objectives" name="objectives" rules={[{ required: true }]}>
+              <TextArea rows={4}/>
+            </Form.Item>
+          </Col>
+        </Row>
+        {/* New row for Outcomes */}
+        <Row gutter={[16, 16]}>
+          <Col span={24}>
+            <Form.Item label="Outcomes" name="outcomes" rules={[{ required: true }]}>
+              <TextArea rows={4}/>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col span={24}>
+            <Button
+              type="primary"
+              style={{ marginRight: 8 }}
+              onClick={addCommunityEvent}
+              disabled={!submittable}
+              >
               Add
             </Button>
             <Button type="primary" danger onClick={onClose}>
