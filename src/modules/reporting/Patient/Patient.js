@@ -1,18 +1,18 @@
 import {
   Table,
-  // Input,
-  // Select,
+  Input,
+  Select,
   Row,
   Col,
-  // Button,
-  // Space,
+  Button,
+  Space,
   Typography,
 } from "antd";
 import { useState } from "react";
 
 import "./Patient.css";
 
-// const { Option } = Select;
+const { Option } = Select;
 const { Title } = Typography;
 
 const columns = [
@@ -234,31 +234,31 @@ const data = [
 
 const Patient = () => {
   const [filteredData] = useState(data);
-  // const [nameFilter, setNameFilter] = useState("");
-  // const [phoneFilter, setPhoneFilter] = useState("");
-  // const [genderFilter, setGenderFilter] = useState("null");
+  const [nameFilter, setNameFilter] = useState("");
+  const [phoneFilter, setPhoneFilter] = useState("");
+  const [genderFilter, setGenderFilter] = useState("null");
 
-  // const handleSearch = () => {
-  //   const filteredResults = data.filter((item) => {
-  //     const nameMatch = item.name
-  //       .toLowerCase()
-  //       .includes(nameFilter.toLowerCase());
-  //     const phoneMatch = item.contact.includes(phoneFilter);
-  //     const genderMatch =
-  //       genderFilter === "null" || item.gender === genderFilter;
+  const handleSearch = () => {
+    const filteredResults = data.filter((item) => {
+      const nameMatch = item.name
+        .toLowerCase()
+        .includes(nameFilter.toLowerCase());
+      const phoneMatch = item.contact.includes(phoneFilter);
+      const genderMatch =
+        genderFilter === "null" || item.gender === genderFilter;
 
-  //     return nameMatch && phoneMatch && genderMatch;
-  //   });
+      return nameMatch && phoneMatch && genderMatch;
+    });
 
-  //   setFilteredData(filteredResults);
-  // };
+    // setFilteredData(filteredResults);
+  };
 
-  // const clearFilters = () => {
-  //   setNameFilter("");
-  //   setPhoneFilter("");
-  //   setGenderFilter("null");
-  //   setFilteredData(data);
-  // };
+  const clearFilters = () => {
+    setNameFilter("");
+    setPhoneFilter("");
+    setGenderFilter("null");
+    // setFilteredData(data);
+  };
   return (
     <>
       <div className="patient" style={{ padding: "20px" }}>
@@ -267,7 +267,7 @@ const Patient = () => {
             <Title level={2}>Patient Disability Report</Title>
           </Col>
         </Row>
-        {/* <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           <Col>
             <h3 className="sub-heading">Filters</h3>
           </Col>
@@ -306,7 +306,7 @@ const Patient = () => {
               <Button onClick={clearFilters}>Clear</Button>
             </Space>
           </Col>
-        </Row> */}
+        </Row>
         <Row>
           <Table columns={columns} dataSource={filteredData} size="large" />
         </Row>
