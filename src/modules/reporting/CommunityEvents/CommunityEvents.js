@@ -11,7 +11,7 @@ import {
   Row,
   Col,
   Spin,
-  notification
+  notification,
 } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import CommunityEventsDetails from "./CommunityEventsDetails";
@@ -58,7 +58,7 @@ const EditableCell = ({
 const CommunityEvents = () => {
   // notifications
   const [api, contextHolder] = notification.useNotification();
-  
+
   const openNotificationWithIcon = (type, data) => {
     api[type]({
       message: data.message,
@@ -66,7 +66,7 @@ const CommunityEvents = () => {
         <>
           <div>
             <span style={{ color: data.color, fontWeight: "bold" }}>
-              Description: 
+              Description:
             </span>{" "}
             {data.description}
           </div>
@@ -100,8 +100,10 @@ const CommunityEvents = () => {
         objectives: row.objectives,
         outcomes: row.outcomes,
         issueAreaID: record.issueAreaID,
-        activityType: record.activityTypes.map(item => item.activityTypeID),
-        primaryEntities: record.primaryEntities.map(item => item.primaryEntityId),
+        activityType: record.activityTypes.map((item) => item.activityTypeID),
+        primaryEntities: record.primaryEntities.map(
+          (item) => item.primaryEntityId
+        ),
       };
       const response = await axios.put(
         `https://communityactivity-2e7ac5425e81.herokuapp.com/communityactivity/${record.communityActivityId}`,
@@ -109,16 +111,28 @@ const CommunityEvents = () => {
       );
       if (response.status === 200) {
         console.log("Record updated successfully");
-        openNotificationWithIcon('success', {color:"#52c41a" , message: "Success", description: "Record updated successfully"});
+        openNotificationWithIcon("success", {
+          color: "#52c41a",
+          message: "Success",
+          description: "Record updated successfully",
+        });
         fetchCommunityActivities();
       } else {
-        openNotificationWithIcon('error', {color:"#ff4d4f" , message: "Failed", description: "Failed to update record"});
+        openNotificationWithIcon("error", {
+          color: "#ff4d4f",
+          message: "Failed",
+          description: "Failed to update record",
+        });
         console.error("Failed to update record");
       }
       setEditingKey("");
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
-      openNotificationWithIcon('error', {color:"#ff4d4f" , message: "Validate Failed:", description: errInfo});
+      openNotificationWithIcon("error", {
+        color: "#ff4d4f",
+        message: "Validate Failed:",
+        description: errInfo,
+      });
     }
   };
 
@@ -268,16 +282,28 @@ const CommunityEvents = () => {
 
       if (response.status === 200) {
         // Successfully deleted the record
-        openNotificationWithIcon('success', {color:"#52c41a" , message: "Success", description: "Record deleted successfully"});
+        openNotificationWithIcon("success", {
+          color: "#52c41a",
+          message: "Success",
+          description: "Record deleted successfully",
+        });
         console.log("Record deleted successfully");
         // Refresh the data after deletion
         fetchCommunityActivities();
       } else {
-        openNotificationWithIcon('error', {color:"#ff4d4f" , message: "Failed", description: "Failed to delete record"});
+        openNotificationWithIcon("error", {
+          color: "#ff4d4f",
+          message: "Failed",
+          description: "Failed to delete record",
+        });
         console.error("Failed to delete record");
       }
     } catch (error) {
-      openNotificationWithIcon('error', {color:"#ff4d4f" , message: "Error deleting record", description: error});
+      openNotificationWithIcon("error", {
+        color: "#ff4d4f",
+        message: "Error deleting record",
+        description: error,
+      });
       console.error("Error deleting record:", error);
     }
   };
@@ -301,6 +327,7 @@ const CommunityEvents = () => {
         key: index.toString(), // You can replace this with the actual unique identifier from your data
       }));
       setData(newData);
+      setFilteredData(newData);
       console.log(newData);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -308,7 +335,7 @@ const CommunityEvents = () => {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchCommunityActivities();
   }, []);
@@ -318,15 +345,27 @@ const CommunityEvents = () => {
     fetchCommunityActivities();
   };
 
+  const [filteredData, setFilteredData] = useState([]); // Add a state to store filtered data
+
+
+  const searchByName = (value) => {
+    const searchText = value.toLowerCase();
+    const filtered = data.filter(
+      (record) =>
+        record.communityActivityName.toLowerCase().includes(searchText)
+    );
+    setFilteredData(filtered);
+  };
+
   const [loading, setLoading] = useState(true);
 
   return (
     <>
-    {contextHolder}
+      {contextHolder}
       <div className="patient" style={{ padding: "20px" }}>
         <Row>
           <Col span={24}>
-            <Title level={2}>Community Events</Title>
+            <Title level={2}>Community Activity Events and Coordination Report</Title>
           </Col>
         </Row>
         <Button
@@ -343,24 +382,40 @@ const CommunityEvents = () => {
           onEventAdded={handleEventAdded}
         />
         {loading ? (
-          <Spin size="large" style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}/>
-        ) : (
-        <Form form={form} component={false}>
-          <Table
-            components={{
-              body: {
-                cell: EditableCell,
-              },
-            }}
-            bordered
-            dataSource={data}
-            columns={mergedColumns}
-            rowClassName="editable-row"
-            pagination={{
-              onChange: cancel,
+          <Spin
+            size="large"
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
             }}
           />
-        </Form>
+        ) : (
+          <Form form={form} component={false}>
+          <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+          <Col>
+            <h3 className="sub-heading">Filters</h3>
+          </Col>
+          <Col span={6}>
+            <Input placeholder="Search by Activity Name" onChange={(e) => searchByName(e.target.value)} />
+          </Col>
+        </Row>
+            <Table
+              components={{
+                body: {
+                  cell: EditableCell,
+                },
+              }}
+              bordered
+              dataSource={filteredData}
+              columns={mergedColumns}
+              rowClassName="editable-row"
+              pagination={{
+                onChange: cancel,
+              }}
+            />
+          </Form>
         )}
       </div>
     </>

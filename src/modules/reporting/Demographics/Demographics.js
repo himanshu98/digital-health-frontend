@@ -569,7 +569,7 @@ const Demographics = () => {
         <Row>
           <Col span={24}>
             <AntTitle level={2} style={{ marginLeft: "100px" }}>
-              Patient Demographics
+            Patients Demographic Information
             </AntTitle>
           </Col>
         </Row>
