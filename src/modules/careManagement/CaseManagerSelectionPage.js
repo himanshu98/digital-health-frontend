@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, Button, Modal, Menu, Dropdown, Form, Input, Divider } from 'antd';
+import { Table, Button, Modal, Menu, Dropdown, Form, Input } from 'antd';
 import { Card } from 'antd';
 
 const CaseManagerSelectionPage = () => {
