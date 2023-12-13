@@ -40,10 +40,10 @@ const Sidebar = ({onDrawerClose, onDrawerOpen}) => {
             <a href="/reporting/utilization">Case Manager Utilization Report</a>
           </li>
           <li>
-            <a href="/reporting/communityevents">Community Activity Events and Coordination Report</a>
+            <a href="/reporting/communityevents">Community Activity Events</a>
           </li>
           <li>
-            <a href="/reporting/communityeventreports">Community Activity Events</a>
+            <a href="/reporting/communityeventreports">Community Activity Events and Coordination Report</a>
           </li>
           <li>
             <a href="/reporting/fsap">Funded Individual Services and Achievements Report</a>

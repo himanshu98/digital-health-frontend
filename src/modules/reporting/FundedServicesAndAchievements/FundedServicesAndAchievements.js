@@ -1,5 +1,8 @@
 import React from "react";
 import { Table, Typography, Row, Col, DatePicker, Space, Button } from "antd";
+import { ExportOutlined } from "@ant-design/icons";
+
+
 const { RangePicker } = DatePicker;
 
 
@@ -186,6 +189,12 @@ const FundedServicesAndAchievements = () => {
               <Button danger>
                 Reset
               </Button>
+              <Button
+                  style={{ marginLeft: "10px" }}
+                  icon={<ExportOutlined />}
+                >
+                  Export
+                </Button>
             </Space>
           </Col>
         </Row>

@@ -365,7 +365,7 @@ const CommunityEvents = () => {
       <div className="patient" style={{ padding: "20px" }}>
         <Row>
           <Col span={24}>
-            <Title level={2}>Community Activity Events and Coordination Report</Title>
+            <Title level={2}>Community Activity Events</Title>
           </Col>
         </Row>
         <Button
