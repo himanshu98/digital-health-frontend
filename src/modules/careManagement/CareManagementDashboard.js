@@ -9,11 +9,14 @@ import {
   Menu,
   Layout,
   Card,
+  message,
 } from "antd";
+import { useHistory } from "react-router-dom";
 
 const { Sider, Content } = Layout;
 
 const CareManagementDashboard = () => {
+  const history = useHistory();
   const columns = [
     {
       title: "Patient Name",
@@ -373,7 +376,18 @@ const CareManagementDashboard = () => {
         </Menu>
       </Sider>
       <Content style={{ padding: "20px" }}>
-        <h1>Patient Selection</h1>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <h1>Patient Selection</h1>
+          <Button
+            type="primary"
+            onClick={() => {
+              history.push("/");
+              message.success("You have been logged out!!");
+            }}
+          >
+            LOGOUT
+          </Button>
+        </div>
         <Table columns={columns} dataSource={data} />
       </Content>
       <Modal
