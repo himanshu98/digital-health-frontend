@@ -24,7 +24,6 @@ const { Content } = Layout;
 
 const ServicesPage = (props) => {
   const [form] = Form.useForm();
-  const [serviceProviders, setServiceProviders] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [servicesList, setservicesList] = useState([]);
   const [serviceRequests, setServiceRequests] = useState([]);
@@ -36,7 +35,7 @@ const ServicesPage = (props) => {
     id: "",
     date: "",
     serviceName: "",
-    serviceID: "", 
+    serviceID: "",
     patientName: "",
     location: "",
     serviceProvider: "",
@@ -55,7 +54,17 @@ const ServicesPage = (props) => {
   const [patientOptions, setPatientOptions] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
 
+  const [serviceProviders, setServiceProviders] = useState();
+
   useEffect(() => {
+    const dummyServiceProviders = [
+      { id: 1, employeeName: "John trolor" },
+      { id: 2, employeeName: "Jane Smith" },
+      { id: 3, employeeName: "Alice Johnson" },
+      { id: 4, employeeName: "Bob Brown" },
+    ];
+
+    setServiceProviders(dummyServiceProviders);
     const fetchServicesData = async () => {
       try {
         const serviceRequests = [
@@ -217,7 +226,6 @@ const ServicesPage = (props) => {
       service: serviceName || "",
     });
 
-    fetchServiceProviders(appointment.serviceID);
     setIsEditModalVisible(true);
   };
 
@@ -234,6 +242,7 @@ const ServicesPage = (props) => {
         ...editingAppointment,
         endTime: dateTimeForApi,
         serviceId: editingAppointment.serviceID,
+        serviceProvider: editingAppointment.serviceProvider,
       };
       const appointmentId = editingAppointment.id;
 
@@ -272,23 +281,12 @@ const ServicesPage = (props) => {
       serviceID: booking.serviceId,
       patientName: "",
       location: "New Jersey",
-      serviceProvider: booking.employeeId,
+      serviceProvider: booking.employeeName,
       patientId: booking.patientId,
     };
   };
 
-  const fetchServiceProviders = async (serviceId) => {
-    try {
-      const response = await axios.get(
-        `https://team3-598fa58116f6.herokuapp.com/api/service-employees/skill/2`
-      );
-      setServiceProviders(response.data);
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error fetching service providers:", error);
-      setServiceProviders([]);
-    }
-  };
+
 
   const onServiceSelectionChange = (selectedServiceIds) => {
     setSelectedServices(selectedServiceIds.map((id) => id.toString()));
@@ -501,8 +499,8 @@ const ServicesPage = (props) => {
           serviceId: parseInt(appointmentData.serviceID, 10),
           startTime: appointmentData.date + "T09:00:00",
           status: appointmentData.status || "Scheduled",
+          serviceProvider: appointmentData.serviceProvider,
         };
-
         try {
           const response = await axios.post(
             "https://team3-598fa58116f6.herokuapp.com/api/bookings/add",
@@ -576,7 +574,6 @@ const ServicesPage = (props) => {
         parseInt(appointment.serviceID) === parseInt(service.serviceID)
       );
     });
-
     const handleCreateAppointment = async (patientID, serviceName) => {
       const patient = serviceRequests.find((p) => p.patientID === patientID);
 
@@ -588,7 +585,7 @@ const ServicesPage = (props) => {
         if (selectedService) break;
       }
 
-      await fetchServiceProviders(selectedService?.serviceID);
+      
 
       setAppointmentData({
         ...appointmentData,
@@ -784,7 +781,7 @@ const ServicesPage = (props) => {
             )
           )}
         </div>
-
+        {console.log(serviceProviders)}
         <Modal
           title="Create Appointment"
           visible={isModalVisible}
@@ -825,15 +822,15 @@ const ServicesPage = (props) => {
             <Form.Item label="Service Provider">
               <Select
                 placeholder="Select Service Provider"
-                value={appointmentData.serviceProvider}
-                onChange={(value) =>
+                value={editingAppointment?.serviceProvider}
+                onChange={(value) =>{
                   setAppointmentData({
                     ...appointmentData,
                     serviceProvider: value,
-                  })
+                  })}
                 }
               >
-                {serviceProviders.map((provider) => (
+                {serviceProviders?.map((provider) => (
                   <Select.Option
                     key={provider.id}
                     value={provider.employeeName}
