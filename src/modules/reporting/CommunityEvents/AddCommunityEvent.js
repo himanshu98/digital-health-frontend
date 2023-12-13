@@ -1,10 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { Drawer, Form, Input, Select, Checkbox, Row, Col, Button } from "antd";
+import { Drawer, Form, Input, Select, Checkbox, Row, Col, Button, notification } from "antd";
 import axios from "axios";
 
 const { TextArea } = Input; // Import TextArea from Ant Design
 
 const AddCommunityEvent = ({ addEvent, setVisibility, onEventAdded }) => {
+    // notifications
+    const [api, contextHolder] = notification.useNotification();
+    const openNotificationWithIcon = (type, data) => {
+      api[type]({
+        message: data.message,
+        description: (
+          <>
+            <div>
+              <span style={{ color: data.color, fontWeight: "bold" }}>
+                Description: 
+              </span>{" "}
+              {data.description}
+            </div>
+          </>
+        ),
+      });
+    };
   const [open, setOpen] = useState(false);
   const [activityTypes, setActivityTypes] = useState([]);
   const [issueAreas, setIssueAreas] = useState([]);
@@ -65,6 +82,15 @@ const AddCommunityEvent = ({ addEvent, setVisibility, onEventAdded }) => {
         setSubmittable(false);
       });
   }, [addEvent, form, setVisibility, values]);
+
+  // positive numbers validator
+  const validatePositiveNumber = (_, value) => {
+    const numberValue = Number(value);
+    if (isNaN(numberValue) || numberValue <= 0) {
+      return Promise.reject(new Error('Please enter a positive number.'));
+    }
+    return Promise.resolve();
+  };
   const addCommunityEvent = async () => {
     try {
       await form.validateFields();
@@ -87,6 +113,7 @@ const AddCommunityEvent = ({ addEvent, setVisibility, onEventAdded }) => {
         apiPayload
       );
       console.log("Community Event added successfully:", response.data);
+      openNotificationWithIcon('success', {color:"#52c41a" , message: "Success", description: "Community Event added successfully"});
       onClose();
       if (onEventAdded) {
         onEventAdded();
@@ -96,6 +123,8 @@ const AddCommunityEvent = ({ addEvent, setVisibility, onEventAdded }) => {
     }
   };
   return (
+    <>
+    {contextHolder}
     <Drawer
       title="Add a Community Event"
       placement="right"
@@ -165,7 +194,12 @@ const AddCommunityEvent = ({ addEvent, setVisibility, onEventAdded }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Enter number of Hours" name="hours" rules={[{ required: true }]}>
+            <Form.Item label="Enter number of Hours" name="hours"
+            rules={[
+              { required: true, message: 'Please enter the number of hours.' },
+              { validator: validatePositiveNumber },
+            ]}
+            >
               <Input type="number"/>
             </Form.Item>
           </Col>
@@ -202,6 +236,7 @@ const AddCommunityEvent = ({ addEvent, setVisibility, onEventAdded }) => {
         </Row>
       </Form>
     </Drawer>
+    </>
   );
 };
 

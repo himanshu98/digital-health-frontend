@@ -21,6 +21,7 @@ import {
   Col,
   Typography,
   Select,
+  Table
 } from "antd";
 import "./Demographics.css";
 
@@ -288,9 +289,13 @@ const Demographics = () => {
         data: [], // Your data here
         borderWidth: 1,
         backgroundColor: pastelColors,
-        borderColor: pastelColors.map(color => color.replace("0.6", "1")),
-        hoverBackgroundColor: pastelColors.map(color => color.replace("0.6", "0.8")),
-        hoverBorderColor: pastelColors.map(color => color.replace("0.6", "1")),
+        borderColor: pastelColors.map((color) => color.replace("0.6", "1")),
+        hoverBackgroundColor: pastelColors.map((color) =>
+          color.replace("0.6", "0.8")
+        ),
+        hoverBorderColor: pastelColors.map((color) =>
+          color.replace("0.6", "1")
+        ),
       },
     ],
   };
@@ -330,9 +335,13 @@ const Demographics = () => {
         data: Object.values(countBySex),
         borderWidth: 1,
         backgroundColor: pastelColors,
-        borderColor: pastelColors.map(color => color.replace("0.6", "1")),
-      hoverBackgroundColor: pastelColors.map(color => color.replace("0.6", "0.8")),
-      hoverBorderColor: pastelColors.map(color => color.replace("0.6", "1")),
+        borderColor: pastelColors.map((color) => color.replace("0.6", "1")),
+        hoverBackgroundColor: pastelColors.map((color) =>
+          color.replace("0.6", "0.8")
+        ),
+        hoverBorderColor: pastelColors.map((color) =>
+          color.replace("0.6", "1")
+        ),
       },
     ],
   };
@@ -347,17 +356,21 @@ const Demographics = () => {
         data: Object.values(countByDisability),
         borderWidth: 1,
         backgroundColor: pastelColors,
-        borderColor: pastelColors.map(color => color.replace("0.6", "1")),
-      hoverBackgroundColor: pastelColors.map(color => color.replace("0.6", "0.8")),
-      hoverBorderColor: pastelColors.map(color => color.replace("0.6", "1")),
+        borderColor: pastelColors.map((color) => color.replace("0.6", "1")),
+        hoverBackgroundColor: pastelColors.map((color) =>
+          color.replace("0.6", "0.8")
+        ),
+        hoverBorderColor: pastelColors.map((color) =>
+          color.replace("0.6", "1")
+        ),
       },
     ],
   };
 
   // dynamic charts
   const [chartType] = useState("bar");
-  
-  const chartTypes = ["bar", "pie", "doughnut"];
+
+  const chartTypes = ["bar", "pie", "doughnut", "table"];
 
   // Race Chart
   const renderRaceChart = () => (
@@ -378,6 +391,45 @@ const Demographics = () => {
     </div>
   );
 
+  // Table
+  const columns = [
+    // Define your columns here
+    // Example:
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Age",
+      dataIndex: "age",
+      key: "age",
+    },
+    // Add more columns as needed
+  ];
+  
+  const dataSource = [
+    // Your data goes here
+    // Example:
+    {
+      key: "1",
+      name: "John Doe",
+      age: 30,
+    },
+    {
+      key: "2",
+      name: "Jane Doe",
+      age: 25,
+    },
+    // Add more data as needed
+  ];
+  const renderTable = () => {
+    return <Table columns={columns} dataSource={dataSource} pagination={{
+      position: ['none', 'none'],
+    }}/>;
+  };
+
+
   const renderRaceChartByType = () => {
     switch (chartTypeRace) {
       case "bar":
@@ -386,6 +438,8 @@ const Demographics = () => {
         return <Pie data={raceData} options={options} />;
       case "doughnut":
         return <Doughnut data={raceData} options={options} />;
+      case "table":
+        return renderTable(); 
       default:
         return null;
     }
@@ -418,6 +472,8 @@ const Demographics = () => {
         return <Pie data={ageBandBarData} options={options} />;
       case "doughnut":
         return <Doughnut data={ageBandBarData} options={options} />;
+      case "table":
+        return renderTable(); 
       default:
         return null;
     }
@@ -450,6 +506,8 @@ const Demographics = () => {
         return <Pie data={sexBarData} options={options} />;
       case "doughnut":
         return <Doughnut data={sexBarData} options={options} />;
+      case "table":
+        return renderTable(); 
       default:
         return null;
     }
@@ -482,14 +540,12 @@ const Demographics = () => {
         return <Pie data={disabilityBarData} options={options} />;
       case "doughnut":
         return <Doughnut data={disabilityBarData} options={options} />;
+      case "table":
+        return renderTable(); 
       default:
         return null;
     }
   };
-
-  // const handleChartTypeChange = (value) => {
-  //   setChartType(value);
-  // };
 
   const [chartTypeRace, setChartTypeRace] = useState("bar");
   const [chartTypeAgeBand, setChartTypeAgeBand] = useState("bar");
