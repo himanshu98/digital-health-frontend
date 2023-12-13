@@ -1,5 +1,7 @@
 import React from "react";
-import { Table, Typography } from "antd";
+import { Table, Typography, Row, Col, DatePicker, Space, Button } from "antd";
+const { RangePicker } = DatePicker;
+
 
 const { Title } = Typography;
 
@@ -173,6 +175,21 @@ const FundedServicesAndAchievements = () => {
     <>
       <div style={{ padding: "20px" }}>
         <Title level={2}>Funded Individual Services and Achievements Report</Title>
+        <div className="datepicker-container">
+        <Row gutter={24}>
+          <Col span={16}>
+            <RangePicker/>
+          </Col>
+          <Col span={8}>
+            <Space>
+              <Button>Filter</Button>
+              <Button danger>
+                Reset
+              </Button>
+            </Space>
+          </Col>
+        </Row>
+      </div>
         <Table columns={columns} dataSource={data} />
       </div>
     </>
