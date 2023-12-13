@@ -25,28 +25,28 @@ const Sidebar = ({onDrawerClose, onDrawerOpen}) => {
       >
         <ul className="menu">
           <li>
-            <a href="/reporting/patient">Patient Disability Reports</a>
+            <a href="/reporting/patient">Types of Patients' Disabilities Report</a>
           </li>
           <li>
-            <a href="/reporting/demographics">Patients Demographics Report</a>
+            <a href="/reporting/demographics">Patients Demographic Information</a>
           </li>
           <li>
-            <a href="/reporting/serviceprovider">Service Provider Report</a>
+            <a href="/reporting/serviceprovider">Services Provided Report</a>
           </li>
           <li>
             <a href="/reporting/performance">Case Manager Performance Report</a>
           </li>
           <li>
-            <a href="/reporting/utilization">Case Manager Utilization</a>
+            <a href="/reporting/utilization">Case Manager Utilization Report</a>
           </li>
           <li>
-            <a href="/reporting/communityevents">Community Events</a>
+            <a href="/reporting/communityevents">Community Activity Events and Coordination Report</a>
           </li>
           <li>
-            <a href="/reporting/communityeventreports">Community Event Reports</a>
+            <a href="/reporting/communityeventreports">Community Activity Events</a>
           </li>
           <li>
-            <a href="/reporting/fsap">Funded Services And Achievements Reports</a>
+            <a href="/reporting/fsap">Funded Individual Services and Achievements Report</a>
           </li>
         </ul>
       </Drawer>

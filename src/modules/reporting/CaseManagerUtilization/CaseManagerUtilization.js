@@ -81,7 +81,7 @@ const CaseManagerUtilization = () => {
     <div className="patient" style={{ padding: "20px" }}>
       <Row>
         <Col span={24}>
-          <Title level={2}>Case Manager Utilization</Title>
+          <Title level={2}>Case Manager Utilization Report</Title>
         </Col>
       </Row>
       <Row>

@@ -264,7 +264,7 @@ const Patient = () => {
       <div className="patient" style={{ padding: "20px" }}>
         <Row>
           <Col span={24}>
-            <Title level={2}>Patient Disability Report</Title>
+            <Title level={2}>Types of Patients' Disabilities Report</Title>
           </Col>
         </Row>
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>

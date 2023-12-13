@@ -53,7 +53,7 @@ const CaseManagerPerformance = () => {
       <div className="patient" style={{ padding: "20px" }}>
       <Row>
         <Col span={24}>
-          <Title level={2}>Case Manager Performance</Title>
+          <Title level={2}>Case Manager Performance Report</Title>
         </Col>
       </Row>
       <Row>
